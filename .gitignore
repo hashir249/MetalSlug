@@ -1,0 +1,17 @@
+# Visual Studio Cache & Intelisense (Crucial to block!)
+.vs/
+*.ipch
+*.aps
+*.ncb
+*.opendb
+*.vc.db
+
+# Build & Compilation Outputs
+build/
+x64/
+Debug/
+Release/
+*.exe
+*.obj
+*.pdb
+*.ilk
