@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7a5fcc6a-6807-442c-8e03-b928956e9596}</ProjectGuid>
+    <ProjectGuid>{a1365aaa-a079-43b6-84ab-ed73dc27d0a3}</ProjectGuid>
     <RootNamespace>MetalSlugCode</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -105,13 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\SFML\include;"C:\Users\ahmad hashir\OneDrive\Desktop\MetalSlug\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SFML\include;"C:\Users\ahmad hashir\OneDrive\Desktop\MetalSlugProject\include"</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>"C:\SFML\lib"</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -123,15 +123,34 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\SFML\include;"C:\Users\ahmad hashir\OneDrive\Desktop\MetalSlug\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\SFML\include;"C:\Users\ahmad hashir\OneDrive\Desktop\MetalSlugProject\include"</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>"C:\SFML\lib"</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\AnimationManager.cpp" />
+    <ClCompile Include="..\..\src\Game.cpp" />
+    <ClCompile Include="..\..\src\GameState.cpp" />
+    <ClCompile Include="..\..\src\GameStateManager.cpp" />
+    <ClCompile Include="..\..\src\MenuState.cpp" />
+    <ClCompile Include="..\..\src\PlayState.cpp" />
+    <ClCompile Include="..\..\src\TextureManager.cpp" />
+    <ClCompile Include="Metal Slug Code.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\AnimationManager.h" />
+    <ClInclude Include="..\..\include\Game.h" />
+    <ClInclude Include="..\..\include\GameState.h" />
+    <ClInclude Include="..\..\include\GameStateManager.h" />
+    <ClInclude Include="..\..\include\MenuState.h" />
+    <ClInclude Include="..\..\include\PlayState.h" />
+    <ClInclude Include="..\..\include\TextureManager.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
