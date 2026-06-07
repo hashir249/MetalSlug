@@ -15,22 +15,14 @@ protected:
 
 public:
 	PlayerSoldier(TextureManager* t, int x, int y) : Soldier(t, x, y) {
-		maxStates = 9;
-		state = 0;
 		speed = 7.0f;
 		direction = 1;
-		scale.x = 2.0;
-		scale.y = 2.0;
-		gapFactor = 0;
+		scale.x = scale.y = 2;
+		gapFactor = legFactor = 0;
+		jumpForce = 20;
 		saturationStat = 50;
-		legFactor = 0;
-	}
-
-	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
-		if (this->hide == true) return;
-		sprite.setPosition((float)position.x - scroll_x, (float)position.y - scroll_y);
-		sprite.setScale(direction == 2 ? -scale.x : scale.x, scale.y);
-		window.draw(sprite);
+		onGround = false;
+		gravityEffect = true;
 	}
 
 	virtual void giveStat(int amount) override {
@@ -63,8 +55,77 @@ public:
 	void takeHit() override {
 
 	}
-	virtual void update() {}
-	virtual void handleInput() {}
+	// overriden functions
+	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
+		if (this->hide == true) return;
+		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
+		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
+		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
+		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
+		window.draw(legs);
+		window.draw(sprite);
+	}
+	void hitBoxUpdate() override {
+		float actualWidth = animation.getWidth() * scale.x;
+		float actualHeight = animation.getHeight() * scale.y;
+		float offset = 0.5f * actualWidth;
+
+		if (direction == 1) {
+			hitbox.left = position.x + offset;
+		}
+		else {
+			hitbox.left = position.x + offset - actualWidth;
+		}
+		hitbox.top = position.y;
+		hitbox.width = actualWidth;
+		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
+	}
+	void update() override {
+		handleInput();
+
+
+		if (state != previousState) {
+			setAnimation(state);
+			previousState = state;
+		}
+		animation.apply(sprite);
+		animationLegs.apply(legs);
+		animation.cycle();
+		animationLegs.cycle();
+		hitBoxUpdate();
+	}
+
+	void handleInput() override {
+		velocity.x = 0;
+	
+		if (Keyboard::isKeyPressed(Keyboard::Right)) {
+			velocity.x = speed;
+			direction = 1;
+			if (onGround) state = 1;
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::Left)) {
+			velocity.x = -speed;
+			direction = 2;
+			if (onGround) state = 1;
+		}
+		else if (onGround) {
+			if (state == 5 && !animation.getDone()) state = 5;
+			else {
+				state = 0;
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Up) && onGround) {
+			velocity.y = -jumpForce;
+			onGround = false;
+			state = 2;
+		}
+		if (state != 5) {
+			if (Keyboard::isKeyPressed(Keyboard::M)) {
+				state = 5;
+			}
+		}
+		
+	}
 };
 
 
@@ -75,19 +136,20 @@ private:
 			animation.setTexture(textureManager->getTexture("tarma_body_idle.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(30).setReversed(true);
-
+			legFactor = 8;
 			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(21).setHeight(16).setReversed(true);
 		}
 		else if (state == 1) { // running
 			animation.setTexture(textureManager->getTexture("tarma_body_run.png"));
-			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(35).setHeight(30).setReversed(true);
-
+			gapFactor = 23;
+			legFactor = 11;
 			animationLegs.setTexture(textureManager->getTexture("tarma_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(250).setPadding(0).setLoop(true);
-			animationLegs.setWidth(31).setHeight(20).setReversed(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(true);
+			animationLegs.setWidth(37).setHeight(20).setReversed(true);
 		}
 
 		else if (state == 2) { // jumping
@@ -110,12 +172,22 @@ private:
 			animationLegs.setWidth(21).setHeight(16).setReversed(true);
 		}
 		else if (state == 4) {
-			animation.setTexture(textureManager->getTexture("tarma_melee.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(30).setHeight(42).setReversed(true);
+			animation.setTexture(textureManager->getTexture("tarma_melee_first.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(2).setDelay(500).setPadding(0).setLoop(false);
+			animation.setWidth(24).setHeight(30).setReversed(true);
 
 			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			animationLegs.setWidth(21).setHeight(16).setReversed(true);
+		}
+		else if (state == 5) {
+			animation.setTexture(textureManager->getTexture("tarma_melee_second.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(150).setPadding(0).setLoop(false);
+			animation.setWidth(49).setHeight(45).setReversed(true);
+			legFactor = 20;
+			gapFactor = 17;
+			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(200).setPadding(0).setLoop(false);
 			animationLegs.setWidth(21).setHeight(16).setReversed(true);
 		}
 	}
@@ -124,66 +196,11 @@ public:
 	Tarma(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
 		maxStates = 5;
 		state = 0;
-		direction = 1;
 		setAnimation(state);
-		scale.x = 2.5;
-		scale.y = 2.5;
-		onGround = false;
-		gravityEffect = true;
-		speed = 5;
-		jumpForce = 15;
+		scale.x = scale.y = 2.5;
 		previousState = state;
-		gapFactor = 16;
+		gapFactor = 21;
 		hitBoxUpdate();
-	}
-
-	void handleInput() override {
-
-		velocity.x = 0;
-		if (Keyboard::isKeyPressed(Keyboard::Z)) {
-			attack();
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Q)) {
-			
-		}
-
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			velocity.x = speed;
-			direction = 1;
-			if (onGround) state = 1;
-		}
-
-		else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			velocity.x = -speed;
-			direction = 2;
-			if (onGround) state = 1;
-		}
-
-		else if (onGround) {
-			state = 0;
-		}
-
-		if (Keyboard::isKeyPressed(Keyboard::Up) && onGround) {
-			velocity.y = -jumpForce;
-			onGround = false;
-			state = 2;
-		}
-	}
-
-	void hitBoxUpdate() override {
-		float actualWidth = animation.getWidth() * scale.x;
-		float actualHeight = animation.getHeight() * scale.y;
-		float offset = 0.5f * actualWidth;
-
-		if (direction == 1) {
-			hitbox.left = position.x + offset;
-		}
-		else {
-			hitbox.left = position.x + offset - actualWidth;
-		}
-		hitbox.top = position.y;
-		hitbox.width = actualWidth;
-		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
 	}
 
 	void attack() override {
@@ -192,30 +209,6 @@ public:
 
 	void takeDamage(int damage) override {
 
-	}
-
-	void update() override {
-		handleInput();
-
-		if (state != previousState) {
-			setAnimation(state);
-			previousState = state;
-		}
-		animation.apply(sprite);
-		animationLegs.apply(legs);
-		animation.cycle();
-		animationLegs.cycle();
-		hitBoxUpdate();
-	}
-
-	void render(RenderWindow& window, int scroll_x, int scroll_y) {
-		if (this->hide == true) return;
-		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
-		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
-		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
-		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
-		window.draw(legs);
-		window.draw(sprite);
 	}
 };
 
@@ -227,7 +220,8 @@ private:
 			animation.setTexture(textureManager->getTexture("marco_body_idle.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(30).setHeight(30).setReversed(true);
-
+			gapFactor = 15;
+			legFactor = 7;
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
@@ -236,17 +230,19 @@ private:
 			animation.setTexture(textureManager->getTexture("marco_body_run.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(32).setHeight(28).setReversed(true);
-
+			gapFactor = 15;
+			legFactor = -7;
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
-			animationLegs.setWidth(25).setHeight(20).setReversed(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
+			animationLegs.setWidth(26).setHeight(20).setReversed(true);
 		}
 
 		else if (state == 2) { // jumping
 			animation.setTexture(textureManager->getTexture("marco_body_jump.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(32).setHeight(30).setReversed(true);
-
+			gapFactor = 15;
+			legFactor = 3;
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(33).setHeight(22).setReversed(true);
@@ -270,78 +266,35 @@ private:
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
 		}
+		else if (state == 5) {
+			animation.setTexture(textureManager->getTexture("marco_melee_final.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
+			animation.setWidth(46).setHeight(46).setReversed(false);
+			gapFactor = 16;
+			legFactor = 22;
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			animationLegs.setWidth(22).setHeight(16).setReversed(true);
+		}
 	}
 
 public:
 	Marco(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
 		maxStates = 4;
 		state = 0;
-		direction = 1;
 		setAnimation(state);
-		scale.x = 2.5;
-		scale.y = 2.5;
-		onGround = false;
-		gravityEffect = true;
-		speed = 5;
-		jumpForce = 20;
+		scale.x = scale.y = 2.5;
 		previousState = state;
-		gapFactor = 12;
+		gapFactor = 15;
 		legFactor = 3;
-
-	}
-
-	void handleInput() override {
-
 	}
 	void attack() override {
 		//takeShot(position.x + (direction == 1 ? 30 : -30), position.y - 20);
 	}
-	void hitBoxUpdate() override {
-		float actualWidth = animation.getWidth() * scale.x;
-		float actualHeight = animation.getHeight() * scale.y;
-		float offset = 0.5f * actualWidth;
-
-		if (direction == 1) {
-			hitbox.left = position.x + offset;
-		}
-		else {
-			hitbox.left = position.x + offset - actualWidth;
-		}
-		hitbox.top = position.y;
-		hitbox.width = actualWidth;
-		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
-	}
-
-
-
 	void takeDamage(int damage) override {
 
 	}
 
-	void update() override {
-		handleInput();
-		if (state != previousState) {
-			setAnimation(state);
-			previousState = state;
-		}
-		animation.apply(sprite);
-		animationLegs.apply(legs);
-		animation.cycle();
-		animationLegs.cycle();
-		hitBoxUpdate();
-	}
-
-	void render(RenderWindow& window, int scroll_x, int scroll_y) {
-		if (this->hide == true) return;
-		if (this->hide == true) return;
-		if (inVehicle()) return; // when in vehicle then no renderig
-		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
-		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
-		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
-		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
-		window.draw(legs);
-		window.draw(sprite);
-	}
 };
 
 
@@ -352,7 +305,7 @@ private:
 			animation.setTexture(textureManager->getTexture("fiolina_body_idle.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(32).setHeight(29).setReversed(true);
-			gapFactor = 30;
+			gapFactor = 39;
 			legFactor = 5;
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
@@ -362,10 +315,10 @@ private:
 			animation.setTexture(textureManager->getTexture("fiolina_body_run.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(31).setHeight(28).setReversed(true);
-			gapFactor = 30;
-			legFactor = 5;
+			gapFactor = 36;
+			legFactor = 0;
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(129).setPadding(0).setLoop(true);
 			animationLegs.setWidth(29).setHeight(26).setReversed(true);
 		}
 
@@ -373,7 +326,7 @@ private:
 			animation.setTexture(textureManager->getTexture("fiolina_body_jump.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(25).setReversed(true);
-			gapFactor = 15;
+			gapFactor = 17;
 			legFactor = 0;
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(2).setDelay(250).setPadding(0).setLoop(true);
@@ -394,7 +347,17 @@ private:
 			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
 			animation.setWidth(46).setHeight(41).setReversed(true);
 
-			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
+			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			animationLegs.setWidth(20).setHeight(24).setReversed(true);
+		}
+		else if (state = 5) {
+			animation.setTexture(textureManager->getTexture("fiolina_melee_final.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
+			animation.setWidth(47).setHeight(41).setReversed(true);
+			gapFactor = 38;
+			legFactor = 16;
+			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
 		}
@@ -404,73 +367,20 @@ public:
 	Fiolina(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
 		maxStates = 5;
 		state = 0;
-		direction = 1;
 		setAnimation(state);
-		scale.x = 2.5;
-		scale.y = 2.5;
-		onGround = false;
-		gravityEffect = true;
-		speed = 5;
-		jumpForce = 16;
-
+		scale.x = scale.y = 2.5;
 		gapFactor = 38;
 		legFactor = 5;
 		previousState = state;
 	}
 
-	void handleInput() override {
-
-	}
 	void attack() override {
 		
 	}
-
-	void hitBoxUpdate() override {
-		float actualWidth = animation.getWidth() * scale.x;
-		float actualHeight = animation.getHeight() * scale.y;
-		float offset = 0.5f * actualWidth;
-
-		if (direction == 1) {
-			hitbox.left = position.x + offset;
-		}
-		else {
-			hitbox.left = position.x + offset - actualWidth;
-		}
-		hitbox.top = position.y;
-		hitbox.width = actualWidth;
-		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
-	}
-
-
-
 	void takeDamage(int damage) override {
 
 	}
 
-	void update() override {
-		handleInput();
-
-		if (state != previousState) {
-			setAnimation(state);
-			previousState = state;
-		}
-		animation.apply(sprite);
-		animationLegs.apply(legs);
-		animation.cycle();
-		animationLegs.cycle();
-		hitBoxUpdate();
-	}
-
-	void render(RenderWindow& window, int scroll_x, int scroll_y) {
-		if (this->hide == true) return;
-		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
-		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
-		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
-		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
-		window.draw(legs);
-		window.draw(sprite);
-
-	}
 };
 
 
@@ -481,8 +391,8 @@ private:
 			animation.setTexture(textureManager->getTexture("eri_body_idle.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(29).setReversed(true);
-			gapFactor = 30;
-			legFactor = 10;
+			gapFactor = 37;
+			legFactor = 12;
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
@@ -492,9 +402,9 @@ private:
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(28).setReversed(true);
 			gapFactor = 30;
-			legFactor = 10;
+			legFactor = 7;
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(true);
 			animationLegs.setWidth(23).setHeight(26).setReversed(true);
 		}
 
@@ -522,7 +432,18 @@ private:
 			animation.setTexture(textureManager->getTexture("eri_melee.png"));
 			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
 			animation.setWidth(46).setHeight(41).setReversed(true);
-
+			gapFactor = 40;
+			legFactor = 0;
+			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			animationLegs.setWidth(20).setHeight(24).setReversed(true);
+		}
+		else if (state == 5) {
+			animation.setTexture(textureManager->getTexture("eri_melee_final.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
+			animation.setWidth(48).setHeight(41).setReversed(true);
+			gapFactor = 45;
+			legFactor = 10;
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
@@ -533,70 +454,16 @@ public:
 	Eri(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
 		maxStates = 5;
 		state = 0;
-		direction = 1;
 		setAnimation(state);
-		scale.x = 2.5;
-		scale.y = 2.5;
-		onGround = false;
-		gravityEffect = true;
-		speed = 5;
-		jumpForce = 16;
-
+		scale.x = scale.y = 2.5;
 		gapFactor = 32;
 		legFactor = 10;
 		previousState = state;
-
-	}
-
-	void handleInput() override {
 	}
 	void attack() override {
 
 	}
-
-	void hitBoxUpdate() override {
-		float actualWidth = animation.getWidth() * scale.x;
-		float actualHeight = animation.getHeight() * scale.y;
-		float offset = 0.5f * actualWidth;
-
-		if (direction == 1) {
-			hitbox.left = position.x + offset;
-		}
-		else {
-			hitbox.left = position.x + offset - actualWidth;
-		}
-		hitbox.top = position.y;
-		hitbox.width = actualWidth;
-		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
-	}
-
-
 	void takeDamage(int damage) override {
-
-	}
-
-	void update() override {
-		handleInput();
-
-		if (state != previousState) {
-			setAnimation(state);
-			previousState = state;
-		}
-		animation.apply(sprite);
-		animationLegs.apply(legs);
-		animation.cycle();
-		animationLegs.cycle();
-		hitBoxUpdate();
-	}
-
-	void render(RenderWindow& window, int scroll_x, int scroll_y) {
-		if (this->hide == true) return;
-		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
-		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
-		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
-		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
-		window.draw(legs);
-		window.draw(sprite);
 
 	}
 };

@@ -1,14 +1,9 @@
 #pragma once
 
-using namespace sf;
-
-//#include "Entity.h"
 #include "PlayerSoldier.h"
 #include "CollisionManager.h"
 
 class EntityManager {
-
-	// dividing the roels based on players for functions 
 	Entity** players;
 	int maxPlayers;
 	int playersCount;
@@ -36,14 +31,6 @@ class EntityManager {
 			delete[] entities;
 			entities = newEntities;
 		}
-	}
-
-	void checkProjectileEnemyCollisions() {
-
-	}
-
-	void setEnemyTargets() {
-
 	}
 
 	void cleanup() {
@@ -117,10 +104,10 @@ public:
 		players = new Entity * [maxPlayers];
 		playersCount = 0;
 
-		addPlayer(new Fiolina(textureManager, 200, 1300));
-		addPlayer(new Tarma(textureManager, 300, 1300));
 		addPlayer(new Eri(textureManager, 400, 1300));
+		addPlayer(new Fiolina(textureManager, 200, 1300));
 		addPlayer(new Marco(textureManager, 500, 1300));
+		addPlayer(new Tarma(textureManager, 300, 1300));
 	}
 
 	void setupLevel(int level) {
@@ -130,7 +117,7 @@ public:
 	}
 
 	void update() {
-		//handleInput();
+		handleInput();
 
 		//Entity* currentPlayer = getCurrentPlayer();
 
@@ -171,15 +158,15 @@ public:
 	}
 
 	void handleInput() {
-		
+		if (Keyboard::isKeyPressed(Keyboard::Z)) {
+			nextPlayer();
+		}
 	}
 
 	void addEntity(Entity* e) {
-
 		if (entityCount == maxEntities) {
 			resize(this->maxEntities + 20);
 		}
-
 		entities[entityCount] = e;
 		entityCount++;
 	}
@@ -190,6 +177,7 @@ public:
 			entities[i]->render(window, scroll_x, scroll_y);
 		}
 	}
+
 	~EntityManager() {
 		cleanup();
 	}

@@ -36,13 +36,13 @@ int PlayState::handleInput() {
 
 void PlayState::render(RenderWindow& window) {
 	levelManager.render(window, camera_x, camera_y);
-	//entityManager.render(window, camera_x, camera_y);
+	entityManager.render(window, camera_x, camera_y);
 }
 
 void PlayState::update() {
 	levelManager.update();
-	//entityManager.update();
-	//collisionManager.setLevel(levelManager.getLevel());
+	entityManager.update();
+	collisionManager.setLevel(levelManager.getLevel());
 }
 
 void PlayState::setup(int choice) {
