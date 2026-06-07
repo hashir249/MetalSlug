@@ -10,8 +10,8 @@ class PlayState : public GameState {
 	int camera_x;
 	int camera_y;
 	LevelManager levelManager;
-	//EntityManager entityManager;
-	//CollisionManager collisionManager;
+	EntityManager entityManager;
+	CollisionManager collisionManager;
 public:
 	PlayState(GameStateManager*);
 	int handleInput() override;

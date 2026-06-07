@@ -7,7 +7,7 @@ class Vehicle;
 class CollisionManager;
 class Projectile;
 class Enemy;
-class Player;
+class PlayerSoldier;
 class Collectible;
 
 //#include "CollisionManager.h"
@@ -33,7 +33,7 @@ protected:
 	bool gravityEffect;
 	bool collided;
 	bool hide;
-
+	Entity* product;
 	bool isProjectile;
 	bool isEnemy;
 public:
@@ -67,6 +67,7 @@ public:
 		active = true;
 		scale.x = scale.y = 1;
 		gravityEffect = true;
+		product = nullptr;
 	}
 
 	// main virtual functions =
@@ -167,10 +168,6 @@ public:
 		return hitbox;
 	}
 
-	sf::Vector2f getPosition() const {
-		return position;
-	}
-
 	int getDirection() const {
 		return direction;
 	}
@@ -242,14 +239,14 @@ public:
 	}
 
 	virtual Entity* productEntity() {
-		return nullptr;
+		return product;
 	}
 
 	// interactions for each object so right fuctions are dispatched
 	
 	// double dispatch pattern
 	virtual void interact(Entity* other) = 0;
-	virtual void interactWithPlayer(Player*) = 0;
+	virtual void interactWithPlayer(PlayerSoldier*) = 0;
 	virtual void interactWithEnemy(Enemy*) = 0;
 	virtual void interactWithProjectile(Projectile*) = 0;
 	virtual void interactWithVehicle(Vehicle*) = 0;

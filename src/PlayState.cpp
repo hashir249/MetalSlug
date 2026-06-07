@@ -1,11 +1,11 @@
 #include "PlayState.h"
 
-//  entityManager(&textureManager, &collisionManager, 1),
-PlayState::PlayState(GameStateManager* manager) : GameState(manager), camera_x(0), camera_y(0) {
+
+PlayState::PlayState(GameStateManager* manager) : GameState(manager), entityManager(&textureManager, &collisionManager, 1), camera_x(0), camera_y(0) {
 	survivalCode = 1;
 	campaignCode = 2;
 	levelManager.setTexture(&textureManager);
-	//collisionManager.setLevel(levelManager.getLevel());
+	collisionManager.setLevel(levelManager.getLevel());
 }
 
 void PlayState::setCameraX(int val) {

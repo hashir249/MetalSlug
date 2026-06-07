@@ -13,16 +13,6 @@ using namespace std;
 #include "TextureManager.h"
 #include "Block.h"
 
-struct Position {
-	int x, y;
-	Position(int x = 0, int y = 0) : x(x), y(y) {}
-};
-struct HitBox {
-	int left, top, width, height;
-	HitBox(int l = 0, int t = 0, int w = 0, int h = 0) : left(l), top(t), width(w), height(h) {}
-};
-
-
 // blocks for the level
 class Level {
 protected:
