@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Metal Slug Code/Metal Slug Code.vcxproj" />
+  <Project Path="Metal Slug Code/Metal Slug Code.vcxproj" Id="a1365aaa-a079-43b6-84ab-ed73dc27d0a3" />
 </Solution>
