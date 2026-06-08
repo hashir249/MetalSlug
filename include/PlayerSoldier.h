@@ -12,7 +12,6 @@ protected:
 	AnimationManager animationLegs;
 	sf::Sprite legs; // as for body sprite woudl be use 
 	virtual void setAnimation(int state) {}
-
 public:
 	PlayerSoldier(TextureManager* t, int x, int y) : Soldier(t, x, y) {
 		speed = 7.0f;
@@ -109,7 +108,8 @@ public:
 			if (onGround) state = 1;
 		}
 		else if (onGround) {
-			if (state == 5 && !animation.getDone()) state = 5;
+			if (state == 3 && !animation.getDone()) state = 3;
+			if (state == 4 && !animation.getDone()) state = 4;
 			else {
 				state = 0;
 			}
@@ -119,11 +119,16 @@ public:
 			onGround = false;
 			state = 2;
 		}
-		if (state != 5) {
+		if (state != 4) {
 			if (Keyboard::isKeyPressed(Keyboard::M)) {
-				state = 5;
+				state = 4;
 			}
 		}
+
+		if (Keyboard::isKeyPressed(Keyboard::Q)) {
+			state = 3;
+		}
+		
 		
 	}
 };
@@ -137,58 +142,67 @@ private:
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(30).setReversed(true);
 			legFactor = 8;
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			gapFactor = 21;
+			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			animationLegs.setWidth(22).setHeight(16).setReversed(true);
 		}
 		else if (state == 1) { // running
 			animation.setTexture(textureManager->getTexture("tarma_body_run.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(35).setHeight(30).setReversed(true);
 			gapFactor = 23;
-			legFactor = 11;
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(true);
-			animationLegs.setWidth(37).setHeight(20).setReversed(true);
+			legFactor = 6;
+			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_run.png"));
+			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(true);
+			//animationLegs.setWidth(37).setHeight(20).setReversed(true);
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_run.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
+			animationLegs.setWidth(26).setHeight(20).setReversed(false);
 		}
 
 		else if (state == 2) { // jumping
 			animation.setTexture(textureManager->getTexture("tarma_body_jump.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animation.setWidth(34).setHeight(30).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_jump.png"));
+			gapFactor = 14;
+			legFactor = 11;
+			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_jump.png"));
+			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
+			//animationLegs.setWidth(33).setHeight(22).setReversed(true);
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(33).setHeight(22).setReversed(true);
 		}
 
 		else if (state == 3) { // shooting
 			animation.setTexture(textureManager->getTexture("tarma_shoot.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(29).setHeight(24).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(89).setPadding(0).setLoop(false);
+			animation.setWidth(56).setHeight(24).setReversed(true);
+			gapFactor = 10;
+			legFactor = 11;
+			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			animationLegs.setWidth(22).setHeight(16).setReversed(true);
 		}
 		else if (state == 4) {
-			animation.setTexture(textureManager->getTexture("tarma_melee_first.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(2).setDelay(500).setPadding(0).setLoop(false);
-			animation.setWidth(24).setHeight(30).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(21).setHeight(16).setReversed(true);
-		}
-		else if (state == 5) {
 			animation.setTexture(textureManager->getTexture("tarma_melee_second.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(150).setPadding(0).setLoop(false);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(100).setPadding(0).setLoop(false);
 			animation.setWidth(49).setHeight(45).setReversed(true);
 			legFactor = 20;
 			gapFactor = 17;
-			animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(200).setPadding(0).setLoop(false);
-			animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
+			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(200).setPadding(0).setLoop(false);
+			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
+			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
+			animationLegs.setWidth(22).setHeight(16).setReversed(true);
 		}
 	}
 
@@ -233,8 +247,8 @@ private:
 			gapFactor = 15;
 			legFactor = -7;
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
-			animationLegs.setWidth(26).setHeight(20).setReversed(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(100).setPadding(0).setLoop(true);
+			animationLegs.setWidth(26).setHeight(20).setReversed(false);
 		}
 
 		else if (state == 2) { // jumping
@@ -250,23 +264,15 @@ private:
 
 		else if (state == 3) { // shooting
 			animation.setTexture(textureManager->getTexture("marco_body_shoot.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(50).setHeight(24).setReversed(true);
-
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(75).setPadding(0).setLoop(false);
+			animation.setWidth(54).setHeight(24).setReversed(true);
+			gapFactor = 11;
+			legFactor = 3;
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
 		}
 		else if (state == 4) {
-			animation.setTexture(textureManager->getTexture("marco_melee.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(50).setHeight(24).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(22).setHeight(16).setReversed(true);
-		}
-		else if (state == 5) {
 			animation.setTexture(textureManager->getTexture("marco_melee_final.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
 			animation.setWidth(46).setHeight(46).setReversed(false);
@@ -335,28 +341,20 @@ private:
 
 		else if (state == 3) { // shooting
 			animation.setTexture(textureManager->getTexture("fiolina_body_shoot.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(52).setHeight(22).setReversed(true);
-
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(false);
+			animation.setWidth(54).setHeight(22).setReversed(true);
+			gapFactor = 24;
+			legFactor = 0;
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
 		}
-		else if (state == 4) {
-			animation.setTexture(textureManager->getTexture("fiolina_melee.png"));
-			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(46).setHeight(41).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(20).setHeight(24).setReversed(true);
-		}
-		else if (state = 5) {
+		else if (state = 4) {
 			animation.setTexture(textureManager->getTexture("fiolina_melee_final.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
-			animation.setWidth(47).setHeight(41).setReversed(true);
-			gapFactor = 38;
-			legFactor = 16;
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(100).setPadding(0).setLoop(false);
+			animation.setWidth(48).setHeight(41).setReversed(true);
+			gapFactor = 40;
+			legFactor = 17;
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
@@ -404,8 +402,8 @@ private:
 			gapFactor = 30;
 			legFactor = 7;
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_run.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(true);
-			animationLegs.setWidth(23).setHeight(26).setReversed(true);
+			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(90).setPadding(0).setLoop(true);
+			animationLegs.setWidth(24).setHeight(26).setReversed(true);
 		}
 
 		else if (state == 2) { // jumping
@@ -421,24 +419,15 @@ private:
 
 		else if (state == 3) { // shooting
 			animation.setTexture(textureManager->getTexture("eri_body_shoot.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(52).setHeight(22).setReversed(true);
-
-			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
-			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animationLegs.setWidth(20).setHeight(24).setReversed(true);
-		}
-		else if (state == 4) {
-			animation.setTexture(textureManager->getTexture("eri_melee.png"));
-			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(46).setHeight(41).setReversed(true);
-			gapFactor = 40;
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(false);
+			animation.setWidth(56).setHeight(22).setReversed(true);
+			gapFactor = 18;
 			legFactor = 0;
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(20).setHeight(24).setReversed(true);
 		}
-		else if (state == 5) {
+		else if (state == 4) {
 			animation.setTexture(textureManager->getTexture("eri_melee_final.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(125).setPadding(0).setLoop(false);
 			animation.setWidth(48).setHeight(41).setReversed(true);

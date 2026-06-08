@@ -120,7 +120,6 @@ public:
 		handleInput();
 
 		//Entity* currentPlayer = getCurrentPlayer();
-
 		//if (ps->inVehicle()) {
 		//	getCurrentPlayer()->setHide(true);
 		//}

@@ -135,38 +135,51 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\AnimationManager.cpp" />
     <ClCompile Include="..\..\src\Block.cpp" />
+    <ClCompile Include="..\..\src\Collectible.cpp" />
     <ClCompile Include="..\..\src\CollisionManager.cpp" />
     <ClCompile Include="..\..\src\DamageableEntity.cpp" />
     <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\EntityManager.cpp" />
+    <ClCompile Include="..\..\src\Fruit.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
     <ClCompile Include="..\..\src\GameState.cpp" />
     <ClCompile Include="..\..\src\GameStateManager.cpp" />
     <ClCompile Include="..\..\src\LevelManager.cpp" />
     <ClCompile Include="..\..\src\Marco.cpp" />
+    <ClCompile Include="..\..\src\Meat.cpp" />
     <ClCompile Include="..\..\src\MenuState.cpp" />
     <ClCompile Include="..\..\src\PlayerSoldier.cpp" />
     <ClCompile Include="..\..\src\PlayState.cpp" />
+    <ClCompile Include="..\..\src\Prisoner.cpp" />
+    <ClCompile Include="..\..\src\Projectile.cpp" />
     <ClCompile Include="..\..\src\Soldier.cpp" />
+    <ClCompile Include="..\..\src\StraightProjectile.cpp" />
     <ClCompile Include="..\..\src\TextureManager.cpp" />
     <ClCompile Include="Metal Slug Code.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\AnimationManager.h" />
     <ClInclude Include="..\..\include\Block.h" />
+    <ClInclude Include="..\..\include\Collectible.h" />
     <ClInclude Include="..\..\include\CollisionManager.h" />
     <ClInclude Include="..\..\include\DamageableEntity.h" />
     <ClInclude Include="..\..\include\Entity.h" />
     <ClInclude Include="..\..\include\EntityManager.h" />
+    <ClInclude Include="..\..\include\Fruit.h" />
     <ClInclude Include="..\..\include\Game.h" />
     <ClInclude Include="..\..\include\GameState.h" />
     <ClInclude Include="..\..\include\GameStateManager.h" />
+    <ClInclude Include="..\..\include\InteractableObject.h" />
     <ClInclude Include="..\..\include\LevelManager.h" />
     <ClInclude Include="..\..\include\Marco.h" />
+    <ClInclude Include="..\..\include\Meat.h" />
     <ClInclude Include="..\..\include\MenuState.h" />
     <ClInclude Include="..\..\include\PlayerSoldier.h" />
     <ClInclude Include="..\..\include\PlayState.h" />
+    <ClInclude Include="..\..\include\Prisoner.h" />
+    <ClInclude Include="..\..\include\Projectile.h" />
     <ClInclude Include="..\..\include\Soldier.h" />
+    <ClInclude Include="..\..\include\StraightProjectile.h" />
     <ClInclude Include="..\..\include\TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
