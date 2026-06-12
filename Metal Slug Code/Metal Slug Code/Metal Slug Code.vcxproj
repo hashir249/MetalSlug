@@ -144,6 +144,7 @@
     <ClCompile Include="..\..\src\Game.cpp" />
     <ClCompile Include="..\..\src\GameState.cpp" />
     <ClCompile Include="..\..\src\GameStateManager.cpp" />
+    <ClCompile Include="..\..\src\Inventory.cpp" />
     <ClCompile Include="..\..\src\LevelManager.cpp" />
     <ClCompile Include="..\..\src\Marco.cpp" />
     <ClCompile Include="..\..\src\Meat.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="..\..\include\GameState.h" />
     <ClInclude Include="..\..\include\GameStateManager.h" />
     <ClInclude Include="..\..\include\InteractableObject.h" />
+    <ClInclude Include="..\..\include\Inventory.h" />
     <ClInclude Include="..\..\include\LevelManager.h" />
     <ClInclude Include="..\..\include\Marco.h" />
     <ClInclude Include="..\..\include\Meat.h" />
@@ -178,9 +180,11 @@
     <ClInclude Include="..\..\include\PlayState.h" />
     <ClInclude Include="..\..\include\Prisoner.h" />
     <ClInclude Include="..\..\include\Projectile.h" />
+    <ClInclude Include="..\..\include\ProjectileWeapon.h" />
     <ClInclude Include="..\..\include\Soldier.h" />
     <ClInclude Include="..\..\include\StraightProjectile.h" />
     <ClInclude Include="..\..\include\TextureManager.h" />
+    <ClInclude Include="..\..\include\Weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

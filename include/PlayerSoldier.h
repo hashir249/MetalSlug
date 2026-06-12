@@ -12,6 +12,10 @@ protected:
 	AnimationManager animationLegs;
 	sf::Sprite legs; // as for body sprite woudl be use 
 	virtual void setAnimation(int state) {}
+	virtual void updateWeaponPlug() {
+		weaponPlug.x = hitbox.width / 2 - 8;
+		weaponPlug.y = hitbox.height / 2 - 8;
+	}
 public:
 	PlayerSoldier(TextureManager* t, int x, int y) : Soldier(t, x, y) {
 		speed = 7.0f;
@@ -22,6 +26,10 @@ public:
 		saturationStat = 50;
 		onGround = false;
 		gravityEffect = true;
+		inventory->addWeapon(new ShotGun(textureManager, position.x, position.y, direction));
+		inventory->addWeapon(new FlameGun(textureManager, position.x, position.y, direction));
+		inventory->addWeapon(new MachineGun(textureManager, position.x, position.y, direction));
+		updateWeaponPlug();
 	}
 
 	virtual void giveStat(int amount) override {
@@ -57,6 +65,9 @@ public:
 	// overriden functions
 	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
 		if (this->hide == true) return;
+		// first rendeing the gun 
+		inventory->render(window, scroll_x, scroll_y);
+		// then the player sprites
 		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
 		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
 		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
@@ -81,8 +92,6 @@ public:
 	}
 	void update() override {
 		handleInput();
-
-
 		if (state != previousState) {
 			setAnimation(state);
 			previousState = state;
@@ -92,11 +101,12 @@ public:
 		animation.cycle();
 		animationLegs.cycle();
 		hitBoxUpdate();
+		updateWeaponPlug();
+		inventory->update(sf::Vector2f(position.x + weaponPlug.x, position.y + weaponPlug.y), direction);
 	}
 
 	void handleInput() override {
 		velocity.x = 0;
-	
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
 			velocity.x = speed;
 			direction = 1;
@@ -128,6 +138,10 @@ public:
 		if (Keyboard::isKeyPressed(Keyboard::Q)) {
 			state = 3;
 		}
+
+		if (Keyboard::isKeyPressed(Keyboard::X)) {
+			inventory->nextWeapon();
+		}
 		
 		
 	}
@@ -143,9 +157,6 @@ private:
 			animation.setWidth(34).setHeight(30).setReversed(true);
 			legFactor = 8;
 			gapFactor = 21;
-			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
-			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
@@ -156,9 +167,6 @@ private:
 			animation.setWidth(35).setHeight(30).setReversed(true);
 			gapFactor = 23;
 			legFactor = 6;
-			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_run.png"));
-			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setDelay(100).setPadding(0).setLoop(true);
-			//animationLegs.setWidth(37).setHeight(20).setReversed(true);
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_run.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
 			animationLegs.setWidth(26).setHeight(20).setReversed(false);
@@ -170,9 +178,6 @@ private:
 			animation.setWidth(34).setHeight(30).setReversed(true);
 			gapFactor = 14;
 			legFactor = 11;
-			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_jump.png"));
-			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
-			//animationLegs.setWidth(33).setHeight(22).setReversed(true);
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(33).setHeight(22).setReversed(true);
@@ -184,9 +189,6 @@ private:
 			animation.setWidth(56).setHeight(24).setReversed(true);
 			gapFactor = 10;
 			legFactor = 11;
-			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
-			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
@@ -197,9 +199,6 @@ private:
 			animation.setWidth(49).setHeight(45).setReversed(true);
 			legFactor = 20;
 			gapFactor = 17;
-			//animationLegs.setTexture(textureManager->getTexture("tarma_legs_idle.png"));
-			//animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(200).setPadding(0).setLoop(false);
-			//animationLegs.setWidth(21).setHeight(16).setReversed(true);
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_idle.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
 			animationLegs.setWidth(22).setHeight(16).setReversed(true);
@@ -215,6 +214,7 @@ public:
 		previousState = state;
 		gapFactor = 21;
 		hitBoxUpdate();
+		
 	}
 
 	void attack() override {

@@ -97,29 +97,32 @@ public:
 	}
 
 	void update() override {
-
 		if (animation.getDone()) {
 			state++;
 			animation.setDone(false);
-
 			if (state == maxStates) {
 				active = false;
 				return;
 			}
-
 			setAnimation(state);
 			previousState = state;
 		}
-
 
 		if (state != previousState) {
 			setAnimation(state);
 			previousState = state;
-
 		}
 		animation.apply(sprite);
 		animation.cycle();
 	}
+
+	virtual void interact(Entity* other) override {}
+	virtual void interactWithPlayer(PlayerSoldier*) override {}
+	virtual void interactWithEnemy(Enemy*) override {}
+	virtual void interactWithProjectile(Projectile*) override {}
+	virtual void interactWithVehicle(Vehicle*) override {}
+	virtual void interactWithCollectible(Collectible*) override {}
+	virtual void interactWithTerrain(Block*) override {}
 
 };
 

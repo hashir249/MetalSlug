@@ -14,7 +14,6 @@ class Collectible;
 #include "Block.h"
 using namespace sf;
 
-
 class Entity {
 protected:
 	sf::Vector2f position;

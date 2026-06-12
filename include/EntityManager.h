@@ -104,8 +104,8 @@ public:
 		players = new Entity * [maxPlayers];
 		playersCount = 0;
 
-		addPlayer(new Fiolina(textureManager, 200, 1300));
 		addPlayer(new Tarma(textureManager, 300, 1300));
+		addPlayer(new Fiolina(textureManager, 200, 1300));
 		addPlayer(new Marco(textureManager, 500, 1300));
 		addPlayer(new Eri(textureManager, 400, 1300));
 	}

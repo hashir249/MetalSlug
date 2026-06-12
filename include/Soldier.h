@@ -1,15 +1,17 @@
 #pragma once
 #include "Entity.h"
 #include "DamageableEntity.h"
+#include "Inventory.h"
 
 class Soldier : public DamageableEntity {
 protected:
 	float jumpForce;
-	//Inventory* inventory; // as soldier does not own it
+	Inventory* inventory; // as soldier does not own it
+	sf::Vector2f weaponPlug;
 public:
 	Soldier(TextureManager* tex, int x, int y) : DamageableEntity(tex, x, y) {
 		jumpForce = 15;
-		//inventory = new Inventory;
+		inventory = new Inventory;
 		product = nullptr; // till now there is no projectile in the start
 		// will be created when fire is shot
 	}
