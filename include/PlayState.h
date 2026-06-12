@@ -4,6 +4,7 @@
 #include "LevelManager.h"
 #include "EntityManager.h"
 #include "CollisionManager.h"
+#include "AudioManager.h"
 
 class PlayState : public GameState {
 	int survivalCode, campaignCode;

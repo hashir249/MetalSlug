@@ -1,5 +1,6 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "GameStateManager.h"
 using namespace sf;
 

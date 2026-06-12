@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Entity.h"
 #include "PlayerSoldier.h"
 #include "CollisionManager.h"
+#include "Projectile.h"
 
 class EntityManager {
 	Entity** players;
@@ -13,6 +15,7 @@ class EntityManager {
 	int entityCount;
 	int maxEntities;
 	int currentLevel;
+	AudioManager* audioManager;
 	TextureManager* textureManager;
 	CollisionManager* collisionManager;
 
@@ -90,7 +93,7 @@ class EntityManager {
 	}
 
 public:
-	EntityManager(TextureManager* tex, CollisionManager* c, int level) : textureManager(tex), collisionManager(c), currentLevel(level) {
+	EntityManager(TextureManager* tex, CollisionManager* c,AudioManager* aud, int level) : textureManager(tex), collisionManager(c), audioManager(aud), currentLevel(level) {
 		maxEntities = 20;
 		entities = new Entity * [maxEntities];
 		for (int i = 0; i < 20; i++) {
@@ -104,11 +107,11 @@ public:
 		players = new Entity * [maxPlayers];
 		playersCount = 0;
 			
-		addPlayer(new Fiolina(textureManager, 200, 1300));
-		addPlayer(new Marco(textureManager, 500, 1300));
-		addPlayer(new Eri(textureManager, 400, 1300));
+		addPlayer(new Fiolina(textureManager,audioManager, 200, 1300));
+		addPlayer(new Marco(textureManager,audioManager, 500, 1300));
+		addPlayer(new Eri(textureManager,audioManager, 400, 1300));
 		
-		addPlayer(new Tarma(textureManager, 300, 1300));
+		addPlayer(new Tarma(textureManager,audioManager, 300, 1300));
 
 	}
 
@@ -133,24 +136,26 @@ public:
 		//	if (shot) addEntity(shot);
 		//}
 
-		//for (int i = 0; i < entityCount; i++) {
-		//	entities[i]->handleInput();
-		//	entities[i]->update();
-		//	collisionManager->resolve(entities[i]); // for collision
+		for (int i = 0; i < entityCount; i++) {
+			entities[i]->handleInput();
+			entities[i]->update();
+			collisionManager->resolve(entities[i]); // for collision
 
-		//	Entity* created = entities[i]->productEntity();
-		//	if (created) addEntity(created);
-		//	if (created) {
-		//		cout << "ts is working" << endl;
-		//	}
-		//}
+			Entity* created = entities[i]->productEntity();
+			if (created) addEntity(created);
+			if (created) {
+				
+			}
+		}
 
 		//// checking interactions betweeen differntn entites
 		//checkPlayerInteractions();
 		//checkProjectileEnemyCollisions();
 
-		//maintainActive();
+		maintainActive();
 		getCurrentPlayer()->update();
+		Entity* shot = getCurrentPlayer()->productEntity();
+		if (shot) addEntity(shot);
 		collisionManager->resolve(getCurrentPlayer());
 	}
 
@@ -161,6 +166,9 @@ public:
 	void handleInput() {
 		if (Keyboard::isKeyPressed(Keyboard::Z)) {
 			nextPlayer();
+		}
+		if (Keyboard::isKeyPressed(Keyboard::M)) {
+			addEntity(new Bullet(textureManager,audioManager,1300, 600, 1, 0));
 		}
 	}
 

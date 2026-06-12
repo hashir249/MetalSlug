@@ -9,7 +9,7 @@ protected:
 	int damage;
 	float speed; // total overall speed, the velocityX and velocityY weuld be at one instant
 public:
-	Projectile(TextureManager* tex, int x, int y) : Entity(tex, x, y) {
+	Projectile(TextureManager* tex,AudioManager* aud, int x, int y) : Entity(tex,aud, x, y) {
 		active = true;
 		isProjectile = true;
 	}

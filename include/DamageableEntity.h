@@ -9,7 +9,7 @@ protected:
 	int invincibleDuration;
 	Clock damageTimer;
 public:
-	DamageableEntity(TextureManager* tex, int x, int y) : Entity(tex, x, y) {
+	DamageableEntity(TextureManager* tex, AudioManager* aud,int x, int y) : Entity(tex,aud, x, y) {
 		invincible = false;
 		hp = 100;
 	}

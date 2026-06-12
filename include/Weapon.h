@@ -14,8 +14,8 @@ protected:
 	int angle;
 	void setAnimation(int state) override {}
 public:
-	Weapon(TextureManager* tex, int x, int y, bool draw = 1) : Entity(tex, x, y), drawable(draw) {
-
+	Weapon(TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw) {
+		angle = 0;
 	}
 
 	virtual Entity* fire() = 0;
@@ -74,13 +74,13 @@ class ShotGun : public Weapon {
 		}
 	}
 public:
-	ShotGun(TextureManager* tex, int x, int y,int direction, bool drawable = 1) : Weapon(tex,x ,y) {
+	ShotGun(TextureManager* tex, AudioManager* aud, int x, int y,int direction, bool drawable = 1) : Weapon(tex,aud,x ,y) {
 		coolDown = 1000;
 		scale.x = scale.y = 1;
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
-		state = 0;
+		state = 1;
 		setAnimation(state);
 	}
 
@@ -89,7 +89,11 @@ public:
 	}
 
 	virtual Entity* fire() override {
-		return new Bullet(textureManager, position.x, position.y, direction, angle);
+		timer.restart();
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		return new Bullet(textureManager,audioManager,x, y, direction, angle);
 	}
 };
 
@@ -117,13 +121,13 @@ class MachineGun : public Weapon {
 		}
 	}
 public:
-	MachineGun(TextureManager* tex, int x, int y, int direction, bool drawable = 1) : Weapon(tex, x, y) {
-		coolDown = 1000;
+	MachineGun(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex,aud, x, y) {
+		coolDown = 100;
 		scale.x = scale.y = 1;
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
-		state = 0;
+		state = 1;
 		setAnimation(state);
 	}
 
@@ -132,7 +136,8 @@ public:
 	}
 
 	virtual Entity* fire() override {
-		return new Bullet(textureManager, position.x, position.y, direction, angle);
+		timer.restart();
+		return new Bullet(textureManager, audioManager,position.x, position.y, direction, angle);
 	}
 };
 
@@ -160,13 +165,13 @@ class FlameGun : public Weapon {
 		}
 	}
 public:
-	FlameGun(TextureManager* tex, int x, int y, int direction, bool drawable = 1) : Weapon(tex, x, y) {
+	FlameGun(TextureManager* tex,AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex,aud, x, y) {
 		coolDown = 1000;
 		scale.x = scale.y = 1;
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
-		state = 0;
+		state = 1;
 		setAnimation(state);
 	}
 
@@ -175,6 +180,51 @@ public:
 	}
 
 	virtual Entity* fire() override {
-		return new Bullet(textureManager, position.x, position.y, direction, angle);
+		timer.restart();
+		return new Bullet(textureManager,audioManager, position.x, position.y, direction, angle);
+	}
+};
+
+class Bazooka : public Weapon {
+	void setAnimation(int state) override {
+		if (state == 0) { // idle
+			animation.setTexture(textureManager->getTexture("bazooka_idle.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(58).setHeight(20).setReversed(true);
+		}
+		else if (state == 1) { // down
+			animation.setTexture(textureManager->getTexture("bazooka_down.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(58).setHeight(24).setReversed(true);
+		}
+		else if (state == 2) { // up
+			animation.setTexture(textureManager->getTexture("bazooka_up.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(10).setHeight(58).setReversed(true);
+		}
+		else if (state == 3) { // side
+			animation.setTexture(textureManager->getTexture("bazooka_side.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(20).setHeight(58).setReversed(true);
+		}
+	}
+public:
+	Bazooka(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex, aud, x, y) {
+		coolDown = 100;
+		scale.x = scale.y = 1;
+		angle = 0;
+		this->direction = direction;
+		maxStates = 4;
+		state = 1;
+		setAnimation(state);
+	}
+
+	virtual bool canFire() override {
+		return timer.getElapsedTime().asMilliseconds() >= coolDown;
+	}
+
+	virtual Entity* fire() override {
+		timer.restart();
+		return new Rocket(textureManager, audioManager, position.x, position.y, direction, angle);
 	}
 };

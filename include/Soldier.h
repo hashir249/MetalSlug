@@ -9,7 +9,7 @@ protected:
 	Inventory* inventory; // as soldier does not own it
 	sf::Vector2f weaponPlug;
 public:
-	Soldier(TextureManager* tex, int x, int y) : DamageableEntity(tex, x, y) {
+	Soldier(TextureManager* tex,AudioManager* aud, int x, int y) : DamageableEntity(tex,aud, x, y) {
 		jumpForce = 15;
 		inventory = new Inventory;
 		product = nullptr; // till now there is no projectile in the start

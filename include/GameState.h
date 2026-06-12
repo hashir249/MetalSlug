@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Window.hpp>
 #include "TextureManager.h"
+#include "AudioManager.h"
 
 class GameStateManager;
 
@@ -13,6 +14,7 @@ using namespace sf;
 class GameState {
 protected:
 	TextureManager textureManager;
+	AudioManager audioManager;
 	GameStateManager* gameStateManager; // does not own it , but to bring changes it will bring about changes 
 	// menu or play states will tell the manager to transition states by calling functions inside the manager
 public:

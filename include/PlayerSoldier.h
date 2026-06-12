@@ -29,7 +29,7 @@ protected:
 		}
 	}
 public:
-	PlayerSoldier(TextureManager* t, int x, int y) : Soldier(t, x, y) {
+	PlayerSoldier(TextureManager* t, AudioManager* aud,int x, int y) : Soldier(t,aud, x, y) {
 		speed = 11;
 		moving = false;
 		maxStates = 6;
@@ -40,9 +40,10 @@ public:
 		saturationStat = 50;
 		onGround = false;
 		gravityEffect = true;
-		inventory->addWeapon(new ShotGun(textureManager, position.x, position.y, direction));
-		inventory->addWeapon(new FlameGun(textureManager, position.x, position.y, direction));
-		inventory->addWeapon(new MachineGun(textureManager, position.x, position.y, direction));
+		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new ShotGun(textureManager, audioManager,position.x, position.y, direction));
+		inventory->addWeapon(new FlameGun(textureManager, audioManager,position.x, position.y, direction));
+		inventory->addWeapon(new MachineGun(textureManager, audioManager,position.x, position.y, direction));
 		updateWeaponPlug();
 	}
 
@@ -332,7 +333,7 @@ private:
 	}
 
 public:
-	Tarma(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
+	Tarma(TextureManager* tex,AudioManager* aud, int x, int y) : PlayerSoldier(tex,aud, x, y) {
 		state = 0;
 		setAnimation(state);
 		scale.x = scale.y = 2.5;
@@ -447,7 +448,7 @@ private:
 	}
 
 public:
-	Marco(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
+	Marco(TextureManager* tex,AudioManager*aud, int x, int y) : PlayerSoldier(tex,aud,x, y) {
 		state = 0;
 		setAnimation(state);
 		scale.x = scale.y = 2.5;
@@ -559,7 +560,7 @@ private:
 	}
 
 public:
-	Fiolina(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
+	Fiolina(TextureManager* tex, AudioManager* aud, int x, int y) : PlayerSoldier(tex,aud, x, y) {
 		state = 0;
 		setAnimation(state);
 		moving = false;
@@ -673,7 +674,7 @@ private:
 		}
 	}
 public:
-	Eri(TextureManager* tex, int x, int y) : PlayerSoldier(tex, x, y) {
+	Eri(TextureManager* tex,AudioManager* aud, int x, int y) : PlayerSoldier(tex, aud,x, y) {
 		state = 0;
 		setAnimation(state);
 		scale.x = scale.y = 2.5;

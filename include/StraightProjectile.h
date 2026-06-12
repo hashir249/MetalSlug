@@ -9,7 +9,7 @@ protected:
 	float range; // can travel that much distanc
 	float distance;
 public:
-	StraightProjectile(TextureManager* tex, int x, int y) : Projectile(tex, x, y) {
+	StraightProjectile(TextureManager* tex,AudioManager* aud, int x, int y) : Projectile(tex,aud, x, y) {
 		gravityEffect = false;
 	}
 
@@ -79,7 +79,7 @@ private:
 	}
 
 public:
-	Bullet(TextureManager* tex, int x, int y, int direction, int angle) : StraightProjectile(tex, x, y) {
+	Bullet(TextureManager* tex, AudioManager* aud, int x, int y, int direction, int angle) : StraightProjectile(tex,aud, x, y) {
 		maxStates = 4;
 		state = 0;
 		previousState = state;
@@ -92,6 +92,7 @@ public:
 		speed = 10;
 		distance = 0;
 		scale.y = 1;
+		active = true;
 		velocityComponents(angle);
 		setAnimation(state);
 	}
@@ -147,7 +148,7 @@ private:
 
 	}
 public:
-	Rocket(TextureManager* tex, int x, int y, int direction, int angle) : StraightProjectile(tex, x, y) {
+	Rocket(TextureManager* tex,AudioManager* aud, int x, int y, int direction, int angle) : StraightProjectile(tex,aud, x, y) {
 		maxStates = 3;
 		state = 0;
 		previousState = state;
@@ -165,4 +166,11 @@ public:
 		setAnimation(state);
 	}
 
+	virtual void interact(Entity* other) override {}
+	virtual void interactWithPlayer(PlayerSoldier*) override {}
+	virtual void interactWithEnemy(Enemy*) override {}
+	virtual void interactWithProjectile(Projectile*) override {}
+	virtual void interactWithVehicle(Vehicle*) override {}
+	virtual void interactWithCollectible(Collectible*) override {}
+	virtual void interactWithTerrain(Block*) override {}
 };

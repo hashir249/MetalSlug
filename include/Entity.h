@@ -1,8 +1,10 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "TextureManager.h"
 #include "AnimationManager.h"
+#include "AudioManager.h"
 class Vehicle;
 class CollisionManager;
 class Projectile;
@@ -27,6 +29,7 @@ protected:
 	sf::Vector2f velocity;
 	AnimationManager animation;
 	TextureManager* textureManager;
+	AudioManager* audioManager;
 	Sprite sprite;
 	sf::Vector2f scale;
 	bool gravityEffect;
@@ -56,7 +59,11 @@ public:
 		this->collided = option;
 	}
 
-	Entity(TextureManager* tex, int x, int y) : textureManager(tex) {
+	void setAudioManager(AudioManager* aud) {
+		if (audioManager == nullptr) audioManager = aud;
+	}
+
+	Entity(TextureManager* tex,AudioManager* aud, int x, int y) : textureManager(tex) {
 		position.x = x;
 		position.y = y;
 		state = 0;
@@ -67,6 +74,7 @@ public:
 		scale.x = scale.y = 1;
 		gravityEffect = true;
 		product = nullptr;
+		audioManager = nullptr;
 	}
 
 	// main virtual functions =
