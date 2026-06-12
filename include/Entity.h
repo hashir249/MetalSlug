@@ -147,7 +147,7 @@ public:
 
 	Entity& setState(int state) {
 		if (state >= 0) {
-			this->state = state;
+			this->state = (state) % maxStates;
 		}
 
 		return *this;

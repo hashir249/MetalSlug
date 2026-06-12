@@ -18,10 +18,16 @@ public:
 		currentWeapon = 0;
 	}
 
-	bool fire() {
+	Entity* fire() {
+		Entity* result = nullptr;
 		if (getCurrentWeapon()->canFire()) {
-			getCurrentWeapon()->fire();
+			result = getCurrentWeapon()->fire();
 		}
+		return result;
+	}
+
+	void setState(int state) {
+		getCurrentWeapon()->setState(state);
 	}
 
 	void nextWeapon() {
@@ -54,6 +60,11 @@ public:
 	void render(RenderWindow& window, int x, int y) {
 		Weapon* w = getCurrentWeapon();
 		if (w) w->render(window, x, y);
+	}
+
+	int getWeaponState() {
+		Weapon* w = getCurrentWeapon();
+		if (w) return w->getState();
 	}
 
 	~Inventory() {
