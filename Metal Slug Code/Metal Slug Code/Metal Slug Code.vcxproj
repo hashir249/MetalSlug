@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\AnimationManager.cpp" />
+    <ClCompile Include="..\..\src\BallisticProjectile.cpp" />
     <ClCompile Include="..\..\src\Block.cpp" />
     <ClCompile Include="..\..\src\Collectible.cpp" />
     <ClCompile Include="..\..\src\CollisionManager.cpp" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\AnimationManager.h" />
+    <ClInclude Include="..\..\include\BallisticProjectile.h" />
     <ClInclude Include="..\..\include\Block.h" />
     <ClInclude Include="..\..\include\Collectible.h" />
     <ClInclude Include="..\..\include\CollisionManager.h" />

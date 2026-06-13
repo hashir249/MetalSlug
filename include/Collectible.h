@@ -172,7 +172,6 @@ public:
 		if (Keyboard::isKeyPressed(sf::Keyboard::E)) {
 			Inventory* i = p->getInventory();
 			int weaponCount = i->getWeaponCount();
-			// replenshing ammo first
 			srand(time(0));
 
 			int choice = rand() % weaponCount;
@@ -180,9 +179,8 @@ public:
 			i->addAmmo(choice, (rand() % 5) * 10);
 			
 			choice = rand() % 100 + 1;
-			choice = 100;
 			if (choice <= 90) {
-				int c = rand() % 2;
+				int c = rand() % 3;
 				if (c == 0) {
 					if (i->getWeapon("ShotGun") != nullptr) {
 						i->getWeapon("ShotGun")->addAmmo(20);

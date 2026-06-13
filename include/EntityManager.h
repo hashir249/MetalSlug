@@ -173,7 +173,7 @@ public:
 			nextPlayer();
 		}
 		if (Keyboard::isKeyPressed(Keyboard::M)) {
-			addEntity(new Bullet(textureManager,audioManager,1300, 600, 1, 0));
+			addEntity(new Grenade(textureManager,audioManager,1300, 600, 1, 0));
 		}
 	}
 

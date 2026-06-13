@@ -5,6 +5,7 @@ class Vehicle;
 
 class PlayerSoldier : public Soldier {
 protected:
+	int grenades;
 	bool moving;
 	int speed;
 	int saturationStat;
@@ -28,6 +29,25 @@ protected:
 			weaponPlug = sf::Vector2f(20, 11);
 		}
 	}
+
+	Entity* throwGrenade()
+	{
+		if (grenades <= 0)
+			return nullptr;
+
+		grenades--;
+
+		int x = position.x + weaponPlug.x;
+		int y = position.y + weaponPlug.y;
+
+		return new Grenade(
+			textureManager,
+			audioManager,
+			x,
+			y,
+			direction,
+			45);
+	}
 public:
 	PlayerSoldier(TextureManager* t, AudioManager* aud,int x, int y) : Soldier(t,aud, x, y) {
 		speed = 11;
@@ -38,10 +58,12 @@ public:
 		saturationStat = 50;
 		onGround = false;
 		gravityEffect = true;
+		grenades = 20;
 		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
 		inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
 		inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
 		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
+
 		updateWeaponPlug();
 		inventory->setWeapon("MachineGun");
 	}
@@ -138,7 +160,8 @@ public:
 		}
 		if (Keyboard::isKeyPressed(Keyboard::G)){
 			state = 5;
-			return;
+			product = throwGrenade();
+		
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Q)){
 			state = 3;

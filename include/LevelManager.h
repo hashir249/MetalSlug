@@ -292,11 +292,14 @@ public:
 	}
 
 	bool isBlock(int x, int y) override {
-		if (x < 0 || x > cellSize * levelWidth || y < 0 || y > cellSize * levelHeight)
+		if (x < 0 || x >= cellSize * levelWidth ||
+			y < 0 || y >= cellSize * levelHeight)
 			return true;
-		if ((y / cellSize) < 0 || (y / cellSize) >= levelHeight - 1)
+
+		if ((y / cellSize) >= levelHeight)
 			return true;
-		if ((x / cellSize) < 0 || (x / cellSize) >= levelWidth - 1)
+
+		if ((x / cellSize) >= levelWidth)
 			return true;
 		char t = map[y / cellSize][x / cellSize].getType();
 		return (t == 'R' || t == 'A' || t == 'D' || t == 'G' || t == 'S');

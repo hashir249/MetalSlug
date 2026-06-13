@@ -10,19 +10,20 @@ class Inventory {
 	Weapon* getCurrentWeapon() {
 		return weapons[currentWeapon];
 	}
+
 public:
 	Inventory() {
 		weaponCount = 0;
 		weaponCap = 2;
 		weapons = new Weapon * [weaponCap] {};
-		currentWeapon = 0;
 	}
+
+	
 
 	Weapon* getWeapon(string n) {
 		for (int i = 0; i < weaponCount; i++) {
 			if (weapons[i]->isWeapon(n)) return weapons[i];
 		}
-
 		return nullptr;
 	}
 
@@ -32,6 +33,7 @@ public:
 
 	void setWeapon(string n) {
 		for (int i = 0; i < weaponCount; i++) {
+			cout << weapons[i]->getName() << endl;
 			if (weapons[i]->isWeapon(n)) {
 				currentWeapon = i;
 				break;
@@ -54,7 +56,6 @@ public:
 		}
 		return result;
 	}
-
 	void setState(int state) {
 		getCurrentWeapon()->setState(state);
 	}
@@ -62,6 +63,7 @@ public:
 	void nextWeapon() {
 		currentWeapon = (currentWeapon + 1) % weaponCount;
 	}
+
 	bool weaponExists(string name) {
 		for (int i = 0; i < weaponCount; i++) {
 			if (weapons[i]->isWeapon(name)) return true;
@@ -81,6 +83,7 @@ public:
 		weaponCount++;
 		weapons[weaponCount - 1] = w;
 	}
+
 
 	void update(sf::Vector2f pos, int direction) {
 		Weapon* w = getCurrentWeapon();

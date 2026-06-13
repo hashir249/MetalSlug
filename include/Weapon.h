@@ -4,6 +4,7 @@
 
 #include "Entity.h"
 #include "Projectile.h"
+#include "BallisticProjectile.h"
 #include "StraightProjectile.h"
 using namespace std;
 using namespace sf;
@@ -302,13 +303,18 @@ public:
 };
 
 class GrenadeLauncher : public Weapon {
-
 public:
 	GrenadeLauncher(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = false) : Weapon("GrenadeLauncher", tex, aud, x, y, drawable) {
-		coolDown = 1000;
-		scale.x = scale.y = 1;
+		coolDown = 10;
+		scale.x = scale.y = 0.7;
 		angle = 0;
 		this->direction = direction;
+		maxStates = 4;
+		state = 1;
+		hide = true;
+		drawable = false;
+		ammo = 10;
+		setAnimation(state);
 	}
 
 	virtual Entity* fire() override {
@@ -319,6 +325,6 @@ public:
 		if (direction == 2) x -= hitbox.width * 2;
 		ammo--;
 		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager, audioManager, x, y, direction, angle);
+		return new Grenade(textureManager, audioManager, x, y, direction, 45);
 	}
 };

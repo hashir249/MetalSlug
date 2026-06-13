@@ -7,7 +7,8 @@ protected:
 	int angle;
 	int impactRadius;
 	int damage;
-	float speed; // total overall speed, the velocityX and velocityY weuld be at one instant
+	float speed; // total overall speed, the 
+	//and velocity.y weuld be at one instant
 public:
 	Projectile(TextureManager* tex,AudioManager* aud, int x, int y) : Entity(tex,aud, x, y) {
 		active = true;
