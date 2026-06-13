@@ -12,6 +12,7 @@ protected:
 	Clock timer;
 	int coolDown;
 	int angle;
+	int ammo;
 	void setAnimation(int state) override {}
 public:
 	Weapon(TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw) {
@@ -19,7 +20,9 @@ public:
 	}
 
 	virtual Entity* fire() = 0;
-	virtual bool canFire() = 0;
+	virtual bool canFire() {
+		return (timer.getElapsedTime().asMilliseconds() >= coolDown) && (ammo > 0);
+	}
 
 	// overrides
 	void update() override {
@@ -33,10 +36,9 @@ public:
 		hitBoxUpdate();
 	}
 	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
-		if (this->hide == true) return;
+		if (this->hide == true || !drawable) return;
 
-		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
-		//sprite.setPosition(position.x - scroll_x + 1 * (animation.getWidth() * scale.x), position.y - scroll_y);
+		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); 
 		sprite.setPosition(position.x - scroll_x, position.y - scroll_y);
 		window.draw(sprite);
 	}
@@ -82,17 +84,21 @@ public:
 		maxStates = 4;
 		state = 1;
 		setAnimation(state);
+		ammo = 50;
 	}
 
 	virtual bool canFire() override {
-		return timer.getElapsedTime().asMilliseconds() >= coolDown;
+		return timer.getElapsedTime().asMilliseconds() >= coolDown || (ammo > 0);
 	}
 
 	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
 		timer.restart();
 		int x = hitbox.width + position.x;
 		int y = position.y + hitbox.height / 2;
 		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
 		return new Bullet(textureManager,audioManager,x, y, direction, angle);
 	}
 };
@@ -129,15 +135,18 @@ public:
 		maxStates = 4;
 		state = 1;
 		setAnimation(state);
-	}
-
-	virtual bool canFire() override {
-		return timer.getElapsedTime().asMilliseconds() >= coolDown;
+		ammo = 10;
 	}
 
 	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
 		timer.restart();
-		return new Bullet(textureManager, audioManager,position.x, position.y, direction, angle);
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
+		return new Bullet(textureManager, audioManager, x, y, direction, angle);
 	}
 };
 
@@ -174,14 +183,15 @@ public:
 		state = 1;
 		setAnimation(state);
 	}
-
-	virtual bool canFire() override {
-		return timer.getElapsedTime().asMilliseconds() >= coolDown;
-	}
-
 	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
 		timer.restart();
-		return new Bullet(textureManager,audioManager, position.x, position.y, direction, angle);
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
+		return new Bullet(textureManager, audioManager, x, y, direction, angle);
 	}
 };
 
@@ -190,12 +200,12 @@ class Bazooka : public Weapon {
 		if (state == 0) { // idle
 			animation.setTexture(textureManager->getTexture("bazooka_idle.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(58).setHeight(20).setReversed(true);
+			animation.setWidth(42).setHeight(16).setReversed(true);
 		}
 		else if (state == 1) { // down
 			animation.setTexture(textureManager->getTexture("bazooka_down.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(58).setHeight(24).setReversed(true);
+			animation.setWidth(41).setHeight(19).setReversed(true);
 		}
 		else if (state == 2) { // up
 			animation.setTexture(textureManager->getTexture("bazooka_up.png"));
@@ -205,26 +215,29 @@ class Bazooka : public Weapon {
 		else if (state == 3) { // side
 			animation.setTexture(textureManager->getTexture("bazooka_side.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(20).setHeight(58).setReversed(true);
+			animation.setWidth(16).setHeight(41).setReversed(true);
 		}
 	}
 public:
 	Bazooka(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex, aud, x, y) {
-		coolDown = 100;
-		scale.x = scale.y = 1;
+		coolDown = 5000;
+		scale.x = scale.y = 1.6;
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
 		state = 1;
 		setAnimation(state);
-	}
-
-	virtual bool canFire() override {
-		return timer.getElapsedTime().asMilliseconds() >= coolDown;
+		ammo = 10;
 	}
 
 	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
 		timer.restart();
-		return new Rocket(textureManager, audioManager, position.x, position.y, direction, angle);
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
+		return new Rocket(textureManager, audioManager, x, y, direction, angle);
 	}
 };

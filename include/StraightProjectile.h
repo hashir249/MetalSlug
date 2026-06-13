@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Projectile.h"
+#include "PlayerSoldier.h"
+#include "Soldier.h"
+#include "Entity.h"
 #include<iostream>
 using namespace std;
 
@@ -98,6 +101,10 @@ public:
 	}
 
 	void update() override {
+
+		if (collided == true) {
+			state = 2;
+		}
 		if (animation.getDone()) {
 			state++;
 			animation.setDone(false);
@@ -117,8 +124,12 @@ public:
 		animation.cycle();
 	}
 
-	virtual void interact(Entity* other) override {}
-	virtual void interactWithPlayer(PlayerSoldier*) override {}
+	virtual void interact(Entity* other) override {
+		other->interactWithProjectile(this);
+	}
+	virtual void interactWithPlayer(PlayerSoldier*) override {
+		
+	}
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile*) override {}
 	virtual void interactWithVehicle(Vehicle*) override {}
@@ -166,8 +177,32 @@ public:
 		setAnimation(state);
 	}
 
+	void update() override {
+
+		if (collided == true) {
+			state = 2;
+		}
+		if (animation.getDone()) {
+			state++;
+			animation.setDone(false);
+			if (state == maxStates) {
+				active = false;
+				return;
+			}
+			setAnimation(state);
+			previousState = state;
+		}
+
+		if (state != previousState) {
+			setAnimation(state);
+			previousState = state;
+		}
+		animation.apply(sprite);
+		animation.cycle();
+	}
+
 	virtual void interact(Entity* other) override {}
-	virtual void interactWithPlayer(PlayerSoldier*) override {}
+	virtual void interactWithPlayer(PlayerSoldier* p) override { collided = true; }
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile*) override {}
 	virtual void interactWithVehicle(Vehicle*) override {}

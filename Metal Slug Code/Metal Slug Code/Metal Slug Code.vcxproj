@@ -140,14 +140,12 @@
     <ClCompile Include="..\..\src\DamageableEntity.cpp" />
     <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\EntityManager.cpp" />
-    <ClCompile Include="..\..\src\Fruit.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
     <ClCompile Include="..\..\src\GameState.cpp" />
     <ClCompile Include="..\..\src\GameStateManager.cpp" />
     <ClCompile Include="..\..\src\Inventory.cpp" />
     <ClCompile Include="..\..\src\LevelManager.cpp" />
     <ClCompile Include="..\..\src\Marco.cpp" />
-    <ClCompile Include="..\..\src\Meat.cpp" />
     <ClCompile Include="..\..\src\MenuState.cpp" />
     <ClCompile Include="..\..\src\PlayerSoldier.cpp" />
     <ClCompile Include="..\..\src\PlayState.cpp" />
@@ -166,7 +164,6 @@
     <ClInclude Include="..\..\include\DamageableEntity.h" />
     <ClInclude Include="..\..\include\Entity.h" />
     <ClInclude Include="..\..\include\EntityManager.h" />
-    <ClInclude Include="..\..\include\Fruit.h" />
     <ClInclude Include="..\..\include\Game.h" />
     <ClInclude Include="..\..\include\GameState.h" />
     <ClInclude Include="..\..\include\GameStateManager.h" />
@@ -174,7 +171,6 @@
     <ClInclude Include="..\..\include\Inventory.h" />
     <ClInclude Include="..\..\include\LevelManager.h" />
     <ClInclude Include="..\..\include\Marco.h" />
-    <ClInclude Include="..\..\include\Meat.h" />
     <ClInclude Include="..\..\include\MenuState.h" />
     <ClInclude Include="..\..\include\PlayerSoldier.h" />
     <ClInclude Include="..\..\include\PlayState.h" />

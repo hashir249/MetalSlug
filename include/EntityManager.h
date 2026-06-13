@@ -4,6 +4,7 @@
 #include "PlayerSoldier.h"
 #include "CollisionManager.h"
 #include "Projectile.h"
+#include "Collectible.h"
 
 class EntityManager {
 	Entity** players;
@@ -113,6 +114,10 @@ public:
 		
 		addPlayer(new Tarma(textureManager,audioManager, 300, 1300));
 
+		
+		addEntity(new SupplyCrate(textureManager, audioManager, 300, 1300));
+		addEntity(new Fruit(textureManager, audioManager, 600, 1200));
+		addEntity(new Turkey(textureManager, audioManager, 1000, 1200));
 	}
 
 	void setupLevel(int level) {
@@ -149,7 +154,7 @@ public:
 		}
 
 		//// checking interactions betweeen differntn entites
-		//checkPlayerInteractions();
+		checkPlayerInteractions();
 		//checkProjectileEnemyCollisions();
 
 		maintainActive();

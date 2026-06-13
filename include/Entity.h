@@ -241,10 +241,6 @@ public:
 		return *this;
 	}
 
-	virtual void giveStat(int amount) {
-
-	}
-
 	virtual Entity* productEntity() {
 		return product;
 	}

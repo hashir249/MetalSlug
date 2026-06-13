@@ -7,7 +7,7 @@ class PlayerSoldier : public Soldier {
 protected:
 	bool moving;
 	int speed;
-	float saturationStat;
+	int saturationStat;
 	int legFactor; // for centering teh legs
 	int gapFactor; // for reducing the gap between the legs and body
 	AnimationManager animationLegs;
@@ -34,8 +34,6 @@ public:
 		moving = false;
 		maxStates = 6;
 		direction = 1;
-		scale.x = scale.y = 2;
-		gapFactor = legFactor = 0;
 		jumpForce = 25;
 		saturationStat = 50;
 		onGround = false;
@@ -46,8 +44,7 @@ public:
 		inventory->addWeapon(new MachineGun(textureManager, audioManager,position.x, position.y, direction));
 		updateWeaponPlug();
 	}
-
-	virtual void giveStat(int amount) override {
+	void giveStat(int amount) {
 		this->saturationStat += amount;
 	}
 
@@ -55,55 +52,21 @@ public:
 		other->interactWithPlayer(this);
 	}
 
-	bool inVehicle() const {
-		return false;
-	}
-
-	void enterVehicle(Vehicle* v) {
-		
-	}
-
-	void exitVehicle() {
-		
-	}
-
 	void takeDamage(int damage) override {
 
-	}
-
-	void addSaturation(int amount) {
-		this->saturationStat += amount;
 	}
 	void takeHit() override {
 
 	}
-	// overriden functions
 	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
 		if (this->hide == true) return;
-		// first rendeing the gun 
-		inventory->render(window, scroll_x, scroll_y);	
-		
-		// then the player sprites
+		inventory->render(window, scroll_x, scroll_y);
 		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); // if direction = 1 that is right in our case, if not then flipping the x-axis
 		legs.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y);
 		sprite.setPosition(position.x - scroll_x + 0.5 * (animation.getWidth() * scale.x), position.y - scroll_y);
 		legs.setPosition(position.x + (direction == 1 ? legFactor : -legFactor) - scroll_x + 0.5 * (animation.getWidth() * scale.x), (scale.y * animation.getHeight()) + position.y - scroll_y - gapFactor); // the y position woudl eb y posioint of bdoy plys
 		window.draw(legs);
 		window.draw(sprite);
-
-		
-		//sf::CircleShape c(5);
-		//c.setFillColor(sf::Color::Blue);
-		//float cx;
-
-		//if (direction == 1)
-		//	cx = position.x + 0.5f * animation.getWidth() * scale.x + weaponPlug.x;
-		//else
-		//	cx = position.x + 0.5f * animation.getWidth() * scale.x - weaponPlug.x;
-
-		//c.setPosition(cx - scroll_x,
-		//	position.y + weaponPlug.y - scroll_y);
-		//window.draw(c);
 	}
 	void hitBoxUpdate() override {
 		float actualWidth = animation.getWidth() * scale.x;
@@ -134,27 +97,19 @@ public:
 		hitBoxUpdate();
 		updateWeaponPlug();
 
-		float cx;
-
-		if (direction == 1)
-			cx = position.x + 0.5f * animation.getWidth() * scale.x + weaponPlug.x;
-		else
-			cx = position.x + 0.5f * animation.getWidth() * scale.x - weaponPlug.x;
-
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
 		inventory->update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
-
 	}
 
 	void handleInput()
 	{
 		velocity.x = 0;
 		moving = false;
-		// locked animations
 		if (state == 4 || state == 5){
 			if (animation.getDone()) state = 0;
 			//return;
 		}
-		// movement
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
 			velocity.x = speed;
 			direction = 1;
@@ -168,7 +123,6 @@ public:
 			if (onGround) state = 1;
 		}
 		else if (onGround) state = 0;
-
 
 		if (Keyboard::isKeyPressed(Keyboard::Up) && onGround){
 			velocity.y = -jumpForce;
@@ -187,57 +141,14 @@ public:
 			state = 3;
 			product = inventory->fire();
 		}
-
 		if (Keyboard::isKeyPressed(Keyboard::X)){
 			inventory->nextWeapon();
 		}
 	}
 
-	//void handleInput() override {
-	//	velocity.x = 0;
-	//	if (Keyboard::isKeyPressed(Keyboard::Right)) {
-	//		velocity.x = speed;
-	//		direction = 1;
-	//		if (onGround) state = 1;
-	//	}
-	//	else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-	//		velocity.x = -speed;
-	//		direction = 2;
-	//		if (onGround) state = 1;
-	//	}
-	//	else if (onGround) {
-	//		if (state == 3 && !animation.getDone()) state = 3;
-	//		if (state == 4 && !animation.getDone()) state = 4;
-	//		if (state == 5 && !animation.getDone()) state = 5;
-	//		else {
-	//			state = 0;
-	//		}
-	//	}
-	//	if (Keyboard::isKeyPressed(Keyboard::Up) && onGround) {
-	//		velocity.y = -jumpForce;
-	//		onGround = false;
-	//		state = 2;
-	//	}
-	//	if (state != 4) {
-	//		if (Keyboard::isKeyPressed(Keyboard::M)) {
-	//			state = 4;
-	//		}
-	//	}
-	//	if (state != 5) {
-	//		if (Keyboard::isKeyPressed(Keyboard::G)) {
-	//			state = 5;
-	//		}
-	//	}
+	void interactWithCollectible(Collectible* c) override {
 
-	//	if (Keyboard::isKeyPressed(Keyboard::Q)) {
-	//		state = 3;
-	//		product = inventory->fire();
-	//	}
-
-	//	if (Keyboard::isKeyPressed(Keyboard::X)) {
-	//		inventory->nextWeapon();
-	//	}
-	//}
+	}
 };
 
 
@@ -292,7 +203,7 @@ private:
 			animation.setWidth(39).setHeight(30).setReversed(true);
 			legFactor = 16;
 			gapFactor = 17;
-			inventory->setState(1);
+			inventory->setState(3);
 		}
 
 		if (moving && onGround) {
@@ -405,7 +316,7 @@ private:
 			animation.setWidth(36).setHeight(30).setReversed(false);
 			gapFactor = 16;
 			legFactor = 15;
-			inventory->setState(1);
+			inventory->setState(3);
 		}
 
 		if (moving && onGround) {
@@ -457,7 +368,6 @@ public:
 		legFactor = 3;
 	}
 	void attack() override {
-		//takeShot(position.x + (direction == 1 ? 30 : -30), position.y - 20);
 	}
 	void takeDamage(int damage) override {
 
@@ -517,7 +427,7 @@ private:
 			animation.setWidth(35).setHeight(30).setReversed(false);
 			gapFactor = 37;
 			legFactor = 7;
-			inventory->setState(1);
+			inventory->setState(3);
 		}
 
 		if (moving && onGround) {
@@ -632,7 +542,7 @@ private:
 			animation.setWidth(38).setHeight(30).setReversed(false);
 			gapFactor = 25;
 			legFactor = 14;
-			inventory->setState(1);
+			inventory->setState(3);
 		}
 
 		if (moving && onGround) {
