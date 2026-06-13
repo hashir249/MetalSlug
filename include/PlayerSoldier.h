@@ -39,10 +39,11 @@ public:
 		onGround = false;
 		gravityEffect = true;
 		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
-		inventory->addWeapon(new ShotGun(textureManager, audioManager,position.x, position.y, direction));
-		inventory->addWeapon(new FlameGun(textureManager, audioManager,position.x, position.y, direction));
-		inventory->addWeapon(new MachineGun(textureManager, audioManager,position.x, position.y, direction));
+		inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
 		updateWeaponPlug();
+		inventory->setWeapon("MachineGun");
 	}
 	void giveStat(int amount) {
 		this->saturationStat += amount;
@@ -83,6 +84,11 @@ public:
 		hitbox.width = actualWidth;
 		hitbox.height = actualHeight + (animationLegs.getHeight() * scale.y) - gapFactor;
 	}
+
+	Inventory* getInventory() {
+		return inventory;
+	}
+
 	void update() override {
 		handleInput();
 		if (state != previousState) {
@@ -90,13 +96,10 @@ public:
 			previousState = state;
 		}
 		if (velocity.x != 0.f && onGround) moving = true;
-		animation.apply(sprite);
-		animationLegs.apply(legs);
-		animation.cycle();
-		animationLegs.cycle();
+		animation.apply(sprite).cycle();
+		animationLegs.apply(legs).cycle();
 		hitBoxUpdate();
 		updateWeaponPlug();
-
 		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
 		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
 		inventory->update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);

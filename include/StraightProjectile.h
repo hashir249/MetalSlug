@@ -36,8 +36,7 @@ public:
 			previousState = state;
 
 		}
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 	}
 
 	virtual void velocityComponents(int angle) {
@@ -92,9 +91,8 @@ public:
 		this->angle = angle;
 		scale.x = scale.y = 1.3;
 		range = 15000;
-		speed = 10;
+		speed = 30;
 		distance = 0;
-		scale.y = 1;
 		active = true;
 		velocityComponents(angle);
 		setAnimation(state);
@@ -120,8 +118,7 @@ public:
 			setAnimation(state);
 			previousState = state;
 		}
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 	}
 
 	virtual void interact(Entity* other) override {
@@ -143,18 +140,18 @@ private:
 	void setAnimation(int state) override {
 		if (state == 0) {
 			animation.setTexture(textureManager->getTexture("rocket_fire.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(20).setPadding(5).setLoop(false);
-			animation.setWidth(13).setHeight(16);
+			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(4).setDelay(20).setPadding(5).setLoop(false);
+			animation.setWidth(22).setHeight(16);
 		}
 		else if (state == 1) {
 			animation.setTexture(textureManager->getTexture("rocket_move.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(24).setHeight(13);
+			animation.setWidth(21).setHeight(12);
 		}
 		else if (state == 2) {
-			animation.setTexture(textureManager->getTexture("rocket_impact.png"));
+			animation.setTexture(textureManager->getTexture("bazooka_impact.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(16).setHeight(14);
+			animation.setWidth(28).setHeight(29);
 		}
 
 	}
@@ -167,12 +164,10 @@ public:
 		damage = 3; // 3 hp
 		impactRadius = 0;
 		this->angle = angle;
-		scale.x = 1;
 		range = 15000;
-		speed = 15;
+		speed = 20;
 		distance = 0;
-		scale.x= 2;
-		scale.y = 2;
+		scale.x = scale.y = 1.5;
 		velocityComponents(angle);
 		setAnimation(state);
 	}
@@ -197,8 +192,7 @@ public:
 			setAnimation(state);
 			previousState = state;
 		}
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 	}
 
 	virtual void interact(Entity* other) override {}

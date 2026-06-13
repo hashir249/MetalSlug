@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "Entity.h"
 #include "Projectile.h"
 #include "StraightProjectile.h"
@@ -8,6 +10,7 @@ using namespace sf;
 
 class Weapon : public Entity {
 protected:
+	const string name;
 	const bool drawable;
 	Clock timer;
 	int coolDown;
@@ -15,8 +18,16 @@ protected:
 	int ammo;
 	void setAnimation(int state) override {}
 public:
-	Weapon(TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw) {
+	Weapon(string n,TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw) {
 		angle = 0;
+	}
+
+	string getName() const {
+		return name;
+	}
+
+	bool isWeapon(string n) {
+		return this->name == n;
 	}
 
 	virtual Entity* fire() = 0;
@@ -31,8 +42,7 @@ public:
 			setAnimation(state);
 			previousState = state;
 		}
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 		hitBoxUpdate();
 	}
 	void render(RenderWindow& window, int scroll_x, int scroll_y) override {
@@ -41,6 +51,10 @@ public:
 		sprite.setScale(scale.x * (direction == 1 ? 1 : -1), scale.y); 
 		sprite.setPosition(position.x - scroll_x, position.y - scroll_y);
 		window.draw(sprite);
+	}
+
+	void addAmmo(int a) {
+		this->ammo += a;
 	}
 	void handleInput() override {}
 	virtual void interact(Entity* other) override {}
@@ -76,7 +90,7 @@ class ShotGun : public Weapon {
 		}
 	}
 public:
-	ShotGun(TextureManager* tex, AudioManager* aud, int x, int y,int direction, bool drawable = 1) : Weapon(tex,aud,x ,y) {
+	ShotGun(TextureManager* tex, AudioManager* aud, int x, int y,int direction, bool drawable = 1) : Weapon("ShotGun", tex, aud, x, y) {
 		coolDown = 1000;
 		scale.x = scale.y = 1;
 		angle = 0;
@@ -127,7 +141,7 @@ class MachineGun : public Weapon {
 		}
 	}
 public:
-	MachineGun(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex,aud, x, y) {
+	MachineGun(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon("MachineGun", tex, aud, x, y) {
 		coolDown = 100;
 		scale.x = scale.y = 1;
 		angle = 0;
@@ -174,7 +188,7 @@ class FlameGun : public Weapon {
 		}
 	}
 public:
-	FlameGun(TextureManager* tex,AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex,aud, x, y) {
+	FlameGun(TextureManager* tex,AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon("FlameGun", tex, aud, x, y) {
 		coolDown = 1000;
 		scale.x = scale.y = 1;
 		angle = 0;
@@ -219,7 +233,7 @@ class Bazooka : public Weapon {
 		}
 	}
 public:
-	Bazooka(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon(tex, aud, x, y) {
+	Bazooka(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon("Bazooka", tex, aud, x, y) {
 		coolDown = 5000;
 		scale.x = scale.y = 1.6;
 		angle = 0;
@@ -239,5 +253,72 @@ public:
 		ammo--;
 		ammo = (ammo < 0) ? 0 : ammo;
 		return new Rocket(textureManager, audioManager, x, y, direction, angle);
+	}
+};
+
+class LaserGun : public Weapon {
+	void setAnimation(int state) override {
+		if (state == 0) { // idle
+			animation.setTexture(textureManager->getTexture("lasergun_idle.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(69).setHeight(32).setReversed(true);
+		}
+		else if (state == 1) { // down
+			animation.setTexture(textureManager->getTexture("lasergun_down.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(70).setHeight(35).setReversed(true);
+		}
+		else if (state == 2) { // up
+			animation.setTexture(textureManager->getTexture("lasergun_up.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(32).setHeight(69).setReversed(true);
+		}
+		else if (state == 3) { // side
+			animation.setTexture(textureManager->getTexture("lasergun_side.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(18).setHeight(69).setReversed(true);
+		}
+	}
+public:
+	LaserGun(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = true) : Weapon("LaserGun", tex, aud, x, y) {
+		coolDown = 1000;
+		scale.x = scale.y = 0.7;
+		angle = 0;
+		this->direction = direction;
+		maxStates = 4;
+		state = 1;
+		setAnimation(state);
+	}
+	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
+		timer.restart();
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
+		return new Bullet(textureManager, audioManager, x, y, direction, angle);
+	}
+};
+
+class GrenadeLauncher : public Weapon {
+
+public:
+	GrenadeLauncher(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = false) : Weapon("GrenadeLauncher", tex, aud, x, y, drawable) {
+		coolDown = 1000;
+		scale.x = scale.y = 1;
+		angle = 0;
+		this->direction = direction;
+	}
+
+	virtual Entity* fire() override {
+		if (!canFire()) return nullptr;
+		timer.restart();
+		int x = hitbox.width + position.x;
+		int y = position.y + hitbox.height / 2;
+		if (direction == 2) x -= hitbox.width * 2;
+		ammo--;
+		ammo = (ammo < 0) ? 0 : ammo;
+		return new Bullet(textureManager, audioManager, x, y, direction, angle);
 	}
 };

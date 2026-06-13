@@ -18,6 +18,35 @@ public:
 		currentWeapon = 0;
 	}
 
+	Weapon* getWeapon(string n) {
+		for (int i = 0; i < weaponCount; i++) {
+			if (weapons[i]->isWeapon(n)) return weapons[i];
+		}
+
+		return nullptr;
+	}
+
+	int getWeaponCount() const {
+		return weaponCount;
+	}
+
+	void setWeapon(string n) {
+		for (int i = 0; i < weaponCount; i++) {
+			if (weapons[i]->isWeapon(n)) {
+				currentWeapon = i;
+				break;
+			}
+		}
+	}
+
+	void setLastWeapon() {
+		currentWeapon = weaponCount - 1;
+	}
+
+	void addAmmo(int i, int a) {
+		weapons[i]->addAmmo(a);
+	}
+
 	Entity* fire() {
 		Entity* result = nullptr;
 		if (getCurrentWeapon()->canFire()) {
@@ -33,7 +62,12 @@ public:
 	void nextWeapon() {
 		currentWeapon = (currentWeapon + 1) % weaponCount;
 	}
-
+	bool weaponExists(string name) {
+		for (int i = 0; i < weaponCount; i++) {
+			if (weapons[i]->isWeapon(name)) return true;
+		}
+		return false;
+	}
 	void addWeapon(Weapon* w) {
 		if (weaponCap == weaponCount) {
 			Weapon** newWeapons = new Weapon * [weaponCap * 2];

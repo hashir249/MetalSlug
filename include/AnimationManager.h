@@ -30,10 +30,11 @@ public:
 		forwardPass = true;
 	}
 
-	void apply(Sprite& sprite) {
-		if (tex == nullptr) return;
+	AnimationManager& apply(Sprite& sprite) {
+		if (tex == nullptr) return *this;
 		sprite.setTexture(*tex);
 		sprite.setTextureRect(IntRect((currentFrame)*width + ((currentFrame != 0) ? currentFrame * padding : 0), 0, width, height)); // left, top, width, height
+		return *this;
 	}
 
 	AnimationManager& setTexture(Texture& tex) {

@@ -77,8 +77,7 @@ public:
 	}
 
 	void update() override {
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 		hitBoxUpdate();
 	}
 
@@ -122,8 +121,7 @@ public:
 	}
 
 	void update() override {
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 		hitBoxUpdate();
 	}
 	void handleInput() override {
@@ -166,13 +164,64 @@ public:
 
 	}
 	void update() override {
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 		hitBoxUpdate();
 	}
 
 	void interactWithPlayer(PlayerSoldier* p) override {
 		if (Keyboard::isKeyPressed(sf::Keyboard::E)) {
+			Inventory* i = p->getInventory();
+			int weaponCount = i->getWeaponCount();
+			// replenshing ammo first
+			srand(time(0));
+
+			int choice = rand() % weaponCount;
+
+			i->addAmmo(choice, (rand() % 5) * 10);
+			
+			choice = rand() % 100 + 1;
+			choice = 100;
+			if (choice <= 90) {
+				int c = rand() % 2;
+				if (c == 0) {
+					if (i->getWeapon("ShotGun") != nullptr) {
+						i->getWeapon("ShotGun")->addAmmo(20);
+					}
+					else {
+						i->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
+						i->setWeapon("ShotGun");
+						i->setLastWeapon();
+					}
+				}
+				else if (c == 1) {
+					if (i->getWeapon("MachineGun") != nullptr) {
+						i->getWeapon("MachineGun")->addAmmo(20);
+					}
+					else {
+						i->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
+						i->setLastWeapon();
+					}
+				}
+				else if (c == 2) {
+					if (i->getWeapon("Bazooka") != nullptr) {
+						i->getWeapon("Bazooka")->addAmmo(20);
+					}
+					else {
+						i->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
+						i->setLastWeapon();
+					}
+				}
+			}
+			else {
+				if (i->getWeapon("LaserGun") != nullptr) {
+					i->getWeapon("LaserGun")->addAmmo(20);
+				}
+				else {
+					i->addWeapon(new LaserGun(textureManager, audioManager, position.x, position.y, direction));
+					i->addAmmo(weaponCount, 20);
+					i->setLastWeapon();
+				}
+			}
 			active = false;
 		}
 	}
