@@ -75,11 +75,51 @@ public:
 		return *this;
 	}
 
+	void depenetrate(Entity* e)
+	{
+		const int MAX_PUSH = 100;
+
+		int tries = 0;
+
+		while (solidAt(e, 0, 0) && tries < MAX_PUSH)
+		{
+			float vx = e->getVelocityX();
+			float vy = e->getVelocityY();
+
+			// Prefer resolving along dominant movement axis
+			if (abs(vx) > abs(vy))
+			{
+				if (vx > 0)
+					e->setPosition(e->getPosition().x - 1, e->getPosition().y);
+				else if (vx < 0)
+					e->setPosition(e->getPosition().x + 1, e->getPosition().y);
+				else
+					e->setPosition(e->getPosition().x, e->getPosition().y - 1);
+			}
+			else
+			{
+				if (vy > 0)
+					e->setPosition(e->getPosition().x, e->getPosition().y - 1);
+				else if (vy < 0)
+					e->setPosition(e->getPosition().x, e->getPosition().y + 1);
+				else
+					e->setPosition(e->getPosition().x, e->getPosition().y - 1);
+			}
+
+			e->hitBoxUpdate();
+			tries++;
+		}
+	}
+
 	void resolve(Entity* e) {
 		if (!level) return;
 
-		while (solidAt(e, 0, 0)) {
-			e->setPosition(e->getPosition().x, e->getPosition().y - 1);
+		int safety = 100;
+
+		while (solidAt(e, 0, 0) && safety--)
+		{
+			e->setPosition(e->getPosition().x,
+				e->getPosition().y - 1);
 			e->hitBoxUpdate();
 		}
 

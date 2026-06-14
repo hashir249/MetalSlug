@@ -1,5 +1,6 @@
 #pragma once
 #include "Soldier.h"
+//#include "Collectible.h"
 using namespace std;
 class Vehicle;
 
@@ -37,16 +38,10 @@ protected:
 
 		grenades--;
 
-		int x = position.x + weaponPlug.x;
-		int y = position.y + weaponPlug.y;
+		int x = position.x;
+		int y = position.y;
 
-		return new Grenade(
-			textureManager,
-			audioManager,
-			x,
-			y,
-			direction,
-			45);
+		return new Grenade(textureManager,audioManager,x,y - 100,direction,75);
 	}
 public:
 	PlayerSoldier(TextureManager* t, AudioManager* aud,int x, int y) : Soldier(t,aud, x, y) {
@@ -59,11 +54,10 @@ public:
 		onGround = false;
 		gravityEffect = true;
 		grenades = 20;
-		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
+		//inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
 		inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
-		inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
-		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
-
+		//inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
+		//inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
 		updateWeaponPlug();
 		inventory->setWeapon("MachineGun");
 	}
@@ -170,6 +164,7 @@ public:
 		if (Keyboard::isKeyPressed(Keyboard::X)){
 			inventory->nextWeapon();
 		}
+		
 	}
 
 	void interactWithCollectible(Collectible* c) override {

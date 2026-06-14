@@ -5,6 +5,7 @@
 #include "CollisionManager.h"
 #include "Projectile.h"
 #include "Collectible.h"
+#include "InteractableObject.h"
 
 class EntityManager {
 	Entity** players;
@@ -111,13 +112,8 @@ public:
 		addPlayer(new Fiolina(textureManager,audioManager, 200, 1300));
 		addPlayer(new Marco(textureManager,audioManager, 500, 1300));
 		addPlayer(new Eri(textureManager,audioManager, 400, 1300));
-		
 		addPlayer(new Tarma(textureManager,audioManager, 300, 1300));
-
-		
-		addEntity(new SupplyCrate(textureManager, audioManager, 300, 1300));
-		addEntity(new Fruit(textureManager, audioManager, 600, 1200));
-		addEntity(new Turkey(textureManager, audioManager, 1000, 1200));
+		addEntity(new PowPrisoner(textureManager, audioManager, 1200, 1200));
 	}
 
 	void setupLevel(int level) {
@@ -162,6 +158,8 @@ public:
 		Entity* shot = getCurrentPlayer()->productEntity();
 		if (shot) addEntity(shot);
 		collisionManager->resolve(getCurrentPlayer());
+
+		cout << entityCount << endl;
 	}
 
 	Entity* getCurrentPlayer() {
@@ -171,9 +169,6 @@ public:
 	void handleInput() {
 		if (Keyboard::isKeyPressed(Keyboard::Z)) {
 			nextPlayer();
-		}
-		if (Keyboard::isKeyPressed(Keyboard::M)) {
-			addEntity(new Grenade(textureManager,audioManager,1300, 600, 1, 0));
 		}
 	}
 
@@ -188,7 +183,7 @@ public:
 	void render(RenderWindow& window, int scroll_x, int scroll_y) {
 		getCurrentPlayer()->render(window, scroll_x, scroll_y);
 		for (int i = 0; i < entityCount; i++) {
-			entities[i]->render(window, scroll_x, scroll_y);
+			if(entities[i]) entities[i]->render(window, scroll_x, scroll_y);
 		}
 	}
 

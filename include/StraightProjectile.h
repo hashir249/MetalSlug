@@ -14,6 +14,8 @@ protected:
 public:
 	StraightProjectile(TextureManager* tex,AudioManager* aud, int x, int y) : Projectile(tex,aud, x, y) {
 		gravityEffect = false;
+		active = true;
+		distance = 0;
 	}
 
 	virtual void update() override {
@@ -50,11 +52,10 @@ public:
 
 class Bullet : public StraightProjectile {
 private:
-
 	void setAnimation(int state) override {
 		if (state == 0) {
 			animation.setTexture(textureManager->getTexture("bullet_first.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(100).setPadding(0).setLoop(false);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(50).setPadding(0).setLoop(false);
 			animation.setWidth(23).setHeight(12);
 		}
 		else if (state == 1) {
@@ -68,14 +69,9 @@ private:
 			animation.setWidth(8).setHeight(8);
 		}
 		else if (state == 3) {
-			animation.setTexture(textureManager->getTexture("bullet_hit.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(1).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(83).setHeight(36);
-		}
-		else if (state == 3) {
 			animation.setTexture(textureManager->getTexture("bullet_impact.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(83).setHeight(36);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(false);
+			animation.setWidth(29).setHeight(30);
 		}
 
 	}
@@ -90,22 +86,25 @@ public:
 		impactRadius = 0;
 		this->angle = angle;
 		scale.x = scale.y = 1.3;
-		range = 15000;
+		range = 1500;
 		speed = 30;
-		distance = 0;
-		active = true;
 		velocityComponents(angle);
 		setAnimation(state);
 	}
 
 	void update() override {
 
-		if (collided == true) {
-			state = 2;
+		if (distance >= range) {
+			active = false;
+			return;
+		}
+
+		if (collided == true && state != 3) {
+			state = 3;
 		}
 		if (animation.getDone()) {
 			state++;
-			animation.setDone(false);
+			//animation.setDone(false);
 			if (state == maxStates) {
 				active = false;
 				return;
@@ -114,11 +113,15 @@ public:
 			previousState = state;
 		}
 
+
 		if (state != previousState) {
 			setAnimation(state);
 			previousState = state;
 		}
 		animation.apply(sprite).cycle();
+
+		distance += velocity.x;
+		distance += velocity.y;
 	}
 
 	virtual void interact(Entity* other) override {

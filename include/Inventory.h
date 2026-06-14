@@ -46,18 +46,21 @@ public:
 	}
 
 	void addAmmo(int i, int a) {
-		weapons[i]->addAmmo(a);
+		if(weaponCount > 0) weapons[i % weaponCount]->addAmmo(a);
 	}
 
 	Entity* fire() {
 		Entity* result = nullptr;
-		if (getCurrentWeapon()->canFire()) {
-			result = getCurrentWeapon()->fire();
+		Weapon* w = getCurrentWeapon();
+		if (w == nullptr) return nullptr;
+		if (w->canFire()) {
+			result = w->fire();
 		}
 		return result;
 	}
 	void setState(int state) {
-		getCurrentWeapon()->setState(state);
+		Weapon* w = getCurrentWeapon();
+		if (w) w->setState(state);
 	}
 
 	void nextWeapon() {

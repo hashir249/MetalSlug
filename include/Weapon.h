@@ -19,7 +19,7 @@ protected:
 	int ammo;
 	void setAnimation(int state) override {}
 public:
-	Weapon(string n,TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw) {
+	Weapon(string n,TextureManager* tex,AudioManager*aud, int x, int y, bool draw = 1) : Entity(tex,aud, x, y), drawable(draw),name(n) {
 		angle = 0;
 	}
 
@@ -55,7 +55,7 @@ public:
 	}
 
 	void addAmmo(int a) {
-		this->ammo += a;
+		ammo += a;
 	}
 	void handleInput() override {}
 	virtual void interact(Entity* other) override {}
@@ -99,11 +99,7 @@ public:
 		maxStates = 4;
 		state = 1;
 		setAnimation(state);
-		ammo = 50;
-	}
-
-	virtual bool canFire() override {
-		return timer.getElapsedTime().asMilliseconds() >= coolDown || (ammo > 0);
+		ammo = 20;
 	}
 
 	virtual Entity* fire() override {
@@ -150,7 +146,7 @@ public:
 		maxStates = 4;
 		state = 1;
 		setAnimation(state);
-		ammo = 10;
+		ammo = 100;
 	}
 
 	virtual Entity* fire() override {
@@ -195,6 +191,7 @@ public:
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
+		ammo = 0;
 		state = 1;
 		setAnimation(state);
 	}
@@ -302,29 +299,3 @@ public:
 	}
 };
 
-class GrenadeLauncher : public Weapon {
-public:
-	GrenadeLauncher(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = false) : Weapon("GrenadeLauncher", tex, aud, x, y, drawable) {
-		coolDown = 10;
-		scale.x = scale.y = 0.7;
-		angle = 0;
-		this->direction = direction;
-		maxStates = 4;
-		state = 1;
-		hide = true;
-		drawable = false;
-		ammo = 10;
-		setAnimation(state);
-	}
-
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Grenade(textureManager, audioManager, x, y, direction, 45);
-	}
-};

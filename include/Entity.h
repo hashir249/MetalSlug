@@ -154,8 +154,8 @@ public:
 	}
 
 	Entity& setState(int state) {
-		if (state >= 0) {
-			this->state = (state) % maxStates;
+		if (state >= 0 && maxStates > 0) {
+			if(maxStates > 0) this->state = (state) % maxStates;
 		}
 
 		return *this;
@@ -242,6 +242,8 @@ public:
 	}
 
 	virtual Entity* productEntity() {
+		Entity* product = this->product;
+		this->product = nullptr;
 		return product;
 	}
 
