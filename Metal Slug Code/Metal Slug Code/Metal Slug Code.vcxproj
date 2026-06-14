@@ -139,6 +139,8 @@
     <ClCompile Include="..\..\src\Collectible.cpp" />
     <ClCompile Include="..\..\src\CollisionManager.cpp" />
     <ClCompile Include="..\..\src\DamageableEntity.cpp" />
+    <ClCompile Include="..\..\src\Enemy.cpp" />
+    <ClCompile Include="..\..\src\EnemyAIState.cpp" />
     <ClCompile Include="..\..\src\Entity.cpp" />
     <ClCompile Include="..\..\src\EntityManager.cpp" />
     <ClCompile Include="..\..\src\Game.cpp" />
@@ -164,6 +166,8 @@
     <ClInclude Include="..\..\include\Collectible.h" />
     <ClInclude Include="..\..\include\CollisionManager.h" />
     <ClInclude Include="..\..\include\DamageableEntity.h" />
+    <ClInclude Include="..\..\include\Enemy.h" />
+    <ClInclude Include="..\..\include\EnemyAIState.h" />
     <ClInclude Include="..\..\include\Entity.h" />
     <ClInclude Include="..\..\include\EntityManager.h" />
     <ClInclude Include="..\..\include\Game.h" />
