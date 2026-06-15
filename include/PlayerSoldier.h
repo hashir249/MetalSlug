@@ -55,9 +55,10 @@ public:
 		gravityEffect = true;
 		grenades = 20;
 		//inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
-		inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
+		//inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
 		//inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
-		//inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addAmmo(0, 10000);
 		updateWeaponPlug();
 		inventory->setWeapon("MachineGun");
 	}
@@ -232,7 +233,7 @@ private:
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
 			animationLegs.setWidth(26).setHeight(20).setReversed(false);
 		}
-		else if (!onGround) {
+		else if (!onGround && moving) {
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(33).setHeight(22).setReversed(true);
@@ -249,16 +250,19 @@ private:
 		if (state == 0) {
 			weaponPlug = sf::Vector2f(24 * scale.x, 12 * scale.y);
 		}
-		else if (state == 1 && onGround) {
-			weaponPlug = sf::Vector2f(16 * scale.x, 23 * scale.y);
+		else if (state == 1 && moving) {
+			weaponPlug = sf::Vector2f(18 * scale.x, 21 * scale.y);
 		}
-		else if (state == 1 && !onGround) {
-			weaponPlug = sf::Vector2f(4 * scale.x, 8 * scale.y);
+		else if (state == 1 && !moving) {
+			weaponPlug = sf::Vector2f(16 * scale.x, 20 * scale.y);
 		}
 		else if (state == 2) {
 			weaponPlug = sf::Vector2f(22, 25);
 		}
-		else if (state == 3) {
+		else if (state == 3 && onGround) {
+			weaponPlug = sf::Vector2f(2 * scale.x, 34 * scale.y);
+		}
+		else if (state == 3 && !onGround) {
 			weaponPlug = sf::Vector2f(2 * scale.x, 34 * scale.y);
 		}
 
@@ -276,7 +280,7 @@ public:
 	}	
 
 	void attack() override {
-		//takeShot(position.x + (direction == 1 ? 30 : -30), position.y - 20);
+
 	}
 
 	void takeDamage(int damage) override {
@@ -345,7 +349,7 @@ private:
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(125).setPadding(0).setLoop(true);
 			animationLegs.setWidth(26).setHeight(20).setReversed(false);
 		}
-		else if (!onGround) {
+		else if (!onGround && moving) {
 			animationLegs.setTexture(textureManager->getTexture("marco_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(33).setHeight(22).setReversed(true);
@@ -360,7 +364,7 @@ private:
 	void updateWeaponPlug() override {
 		int state = inventory->getWeaponState();
 		if (state == 0) {
-			weaponPlug = sf::Vector2f(28*scale.x, 11*scale.y);
+			weaponPlug = sf::Vector2f(25.2*scale.x, 10.2*scale.y);
 		}
 		else if (state == 1 && moving) {
 			weaponPlug = sf::Vector2f(21*scale.x,21*scale.y);
@@ -456,7 +460,7 @@ private:
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(129).setPadding(0).setLoop(true);
 			animationLegs.setWidth(29).setHeight(26).setReversed(true);
 		}
-		else if (!onGround) {
+		else if (!onGround && moving) {
 			animationLegs.setTexture(textureManager->getTexture("fiolina_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(2).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(27).setHeight(22).setReversed(true);
@@ -471,7 +475,7 @@ private:
 	void updateWeaponPlug() override {
 		int state = inventory->getWeaponState();
 		if (state == 0) {
-			weaponPlug = sf::Vector2f(20 * scale.x, 9 * scale.y);
+			weaponPlug = sf::Vector2f(19.2 * scale.x, 9 * scale.y);
 		}
 		else if (state == 1 && moving) {
 			weaponPlug = sf::Vector2f(17 * scale.x, 18 * scale.y);
@@ -571,7 +575,7 @@ private:
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(90).setPadding(0).setLoop(true);
 			animationLegs.setWidth(24).setHeight(26).setReversed(true);
 		}
-		else if (!onGround) {
+		else if (!onGround && moving) {
 			animationLegs.setTexture(textureManager->getTexture("eri_legs_jump.png"));
 			animationLegs.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(250).setPadding(0).setLoop(true);
 			animationLegs.setWidth(31).setHeight(22).setReversed(true);
@@ -589,10 +593,10 @@ private:
 			weaponPlug = sf::Vector2f(24 * scale.x, 12 * scale.y);
 		}
 		else if (state == 1 && moving) {
-			weaponPlug = sf::Vector2f(19 * scale.x, 21 * scale.y);
+			weaponPlug = sf::Vector2f(23 * scale.x, 21 * scale.y);
 		}
-		else if (state == 1 && !onGround) {
-			weaponPlug = sf::Vector2f(5 * scale.x, 10 * scale.y);
+		else if (state == 1 && !moving) {
+			weaponPlug = sf::Vector2f(18 * scale.x, 17 * scale.y);
 		}
 		else if (state == 2) {
 			weaponPlug = sf::Vector2f(22, 25);
@@ -622,5 +626,3 @@ public:
 
 	}
 };
-
-

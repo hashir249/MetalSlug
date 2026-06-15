@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Projectile.h"
-#include "PlayerSoldier.h"
 #include "Soldier.h"
 #include "Entity.h"
 #include<iostream>
@@ -70,7 +69,7 @@ private:
 		}
 		else if (state == 3) {
 			animation.setTexture(textureManager->getTexture("bullet_impact.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(false);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(100).setPadding(0).setLoop(false);
 			animation.setWidth(29).setHeight(30);
 		}
 
@@ -101,6 +100,7 @@ public:
 
 		if (collided == true && state != 3) {
 			state = 3;
+			velocity = sf::Vector2f(0, 0);
 		}
 		if (animation.getDone()) {
 			state++;
@@ -127,10 +127,8 @@ public:
 	virtual void interact(Entity* other) override {
 		other->interactWithProjectile(this);
 	}
-	virtual void interactWithPlayer(PlayerSoldier*) override {
-		
-	}
-	virtual void interactWithEnemy(Enemy*) override {}
+	virtual void interactWithPlayer(PlayerSoldier*) override;
+	virtual void interactWithEnemy(Enemy*) override;
 	virtual void interactWithProjectile(Projectile*) override {}
 	virtual void interactWithVehicle(Vehicle*) override {}
 	virtual void interactWithCollectible(Collectible*) override {}

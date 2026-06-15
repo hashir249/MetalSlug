@@ -11,11 +11,14 @@ protected:
 public:
 	DamageableEntity(TextureManager* tex, AudioManager* aud,int x, int y) : Entity(tex,aud, x, y) {
 		invincible = false;
-		hp = 100;
+		hp = 10;
 	}
 	virtual void takeDamage(int damage) = 0;
 	virtual void takeHit() = 0;
 
+	int getHp() const {
+		return hp;
+	}
 
 	bool isDead() const {
 		return hp <= 0;

@@ -18,8 +18,8 @@ using namespace sf;
 
 class Entity {
 protected:
-	sf::Vector2f position;
-	sf::IntRect hitbox;
+	sf::Vector2f position{};
+	sf::IntRect hitbox{};
 	bool active;  // updates entity
 	int direction; // right or left ( 1 for right . 2 for left) 0 means direction does not matter
 	int previousState; // for keeping track to not load same animation over and over again
@@ -63,15 +63,12 @@ public:
 		if (audioManager == nullptr) audioManager = aud;
 	}
 
-	Entity(TextureManager* tex,AudioManager* aud, int x, int y) : textureManager(tex) {
-		position.x = x;
-		position.y = y;
-		state = 0;
-		maxStates = 0;
-		velocity.x = velocity.y = 0;
-		hide = false;
-		active = true;
-		scale.x = scale.y = 1;
+	Entity(TextureManager* tex,AudioManager* aud, int x, int y) : textureManager(tex),active(true) {
+		position = sf::Vector2f(x, y);
+		state = maxStates = 0;
+		velocity = sf::Vector2f(0, 0);
+		scale = sf::Vector2f(0, 0);
+		hide = isEnemy = isProjectile;
 		gravityEffect = true;
 		product = nullptr;
 		audioManager = nullptr;
@@ -110,6 +107,11 @@ public:
 	Entity& setPosition(sf::Vector2f& position) {
 		this->position = position;
 
+		return *this;
+	}
+
+	Entity& setCollided(bool c) {
+		collided = c;
 		return *this;
 	}
 
@@ -247,8 +249,25 @@ public:
 		return product;
 	}
 
+	bool getEnemyStatus() const {
+		return isEnemy;
+	}
+	bool getProjectileStatus() const {
+		return isProjectile;
+	}
+
+	bool getCollided() const {
+		return collided;
+	}
+
+	// only for enemies, the target locations of players are gonna be sent
+	virtual void setTarget(sf::Vector2f pos) {
+
+	}
+	virtual void setProjectile(sf::Vector2f pos) {
+
+	}
 	// interactions for each object so right fuctions are dispatched
-	
 	// double dispatch pattern
 	virtual void interact(Entity* other) = 0;
 	virtual void interactWithPlayer(PlayerSoldier*) = 0;

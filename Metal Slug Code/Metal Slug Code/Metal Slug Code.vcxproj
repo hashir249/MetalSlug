@@ -157,6 +157,7 @@
     <ClCompile Include="..\..\src\Soldier.cpp" />
     <ClCompile Include="..\..\src\StraightProjectile.cpp" />
     <ClCompile Include="..\..\src\TextureManager.cpp" />
+    <ClCompile Include="..\..\src\Weapon.cpp" />
     <ClCompile Include="Metal Slug Code.cpp" />
   </ItemGroup>
   <ItemGroup>

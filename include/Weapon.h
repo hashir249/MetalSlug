@@ -5,7 +5,7 @@
 #include "Entity.h"
 #include "Projectile.h"
 #include "BallisticProjectile.h"
-#include "StraightProjectile.h"
+
 using namespace std;
 using namespace sf;
 
@@ -102,16 +102,7 @@ public:
 		ammo = 20;
 	}
 
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager,audioManager,x, y, direction, angle);
-	}
+	virtual Entity* fire() override;
 };
 
 class MachineGun : public Weapon {
@@ -149,16 +140,7 @@ public:
 		ammo = 100;
 	}
 
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager, audioManager, x, y, direction, angle);
-	}
+	virtual Entity* fire() override;
 };
 
 class FlameGun : public Weapon {
@@ -195,16 +177,7 @@ public:
 		state = 1;
 		setAnimation(state);
 	}
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager, audioManager, x, y, direction, angle);
-	}
+	virtual Entity* fire() override;
 };
 
 class Bazooka : public Weapon {
@@ -242,16 +215,7 @@ public:
 		ammo = 10;
 	}
 
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Rocket(textureManager, audioManager, x, y, direction, angle);
-	}
+	virtual Entity* fire() override;
 };
 
 class LaserGun : public Weapon {
@@ -287,15 +251,6 @@ public:
 		state = 1;
 		setAnimation(state);
 	}
-	virtual Entity* fire() override {
-		if (!canFire()) return nullptr;
-		timer.restart();
-		int x = hitbox.width + position.x;
-		int y = position.y + hitbox.height / 2;
-		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
-		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager, audioManager, x, y, direction, angle);
-	}
+	virtual Entity* fire() override;
 };
 

@@ -6,6 +6,7 @@
 #include "Projectile.h"
 #include "Collectible.h"
 #include "InteractableObject.h"
+#include "Enemy.h"
 
 class EntityManager {
 	Entity** players;
@@ -86,6 +87,26 @@ class EntityManager {
 		playersCount++;
 	}
 
+	void checkProjectileCollisions() {
+		for (int i = 0; i < entityCount; i++) {
+			// Only check if it's a projectile (assuming you have a way to identify)
+			if (!entities[i]->getProjectileStatus()) continue;
+
+			for (int j = 0; j < entityCount; j++) {
+				// Don't check against self or other projectiles
+				if (i == j || entities[j]->getProjectileStatus()) continue;
+
+				// Only interact if it's an enemy
+				if (!entities[j]->getEnemyStatus()) continue;
+
+				if (entityOverlap(entities[i]->getHitBox(), entities[j]->getHitBox())) {
+					// Trigger the interaction
+					entities[i]->interact(entities[j]);
+				}
+			}
+		}
+	}
+
 	void nextPlayer() {
 		sf::Vector2f p = getCurrentPlayer()->getPosition();
 		int direction = getCurrentPlayer()->getDirection();
@@ -113,7 +134,12 @@ public:
 		addPlayer(new Marco(textureManager,audioManager, 500, 1300));
 		addPlayer(new Eri(textureManager,audioManager, 400, 1300));
 		addPlayer(new Tarma(textureManager,audioManager, 300, 1300));
-		addEntity(new PowPrisoner(textureManager, audioManager, 1200, 1200));
+		addEntity(new PowPrisoner(textureManager, audioManager, 600, 1200));
+		
+		for (int i = 0; i < 1; i++) {
+			//addEntity(new ShieldedSoldier(textureManager, audioManager, 1400 + i * 100, 1200));
+			addEntity(new Zombie(textureManager, audioManager, 2800 + i * 200, 1200));
+		}
 	}
 
 	void setupLevel(int level) {
@@ -138,7 +164,8 @@ public:
 		//}
 
 		for (int i = 0; i < entityCount; i++) {
-			entities[i]->handleInput();
+			if (entities[i]->getEnemyStatus()) entities[i]->setTarget(getCurrentPlayer()->getPosition());
+			//entities[i]->handleInput();
 			entities[i]->update();
 			collisionManager->resolve(entities[i]); // for collision
 
@@ -150,6 +177,7 @@ public:
 		}
 
 		//// checking interactions betweeen differntn entites
+		checkProjectileCollisions();
 		checkPlayerInteractions();
 		//checkProjectileEnemyCollisions();
 
@@ -159,7 +187,7 @@ public:
 		if (shot) addEntity(shot);
 		collisionManager->resolve(getCurrentPlayer());
 
-		cout << entityCount << endl;
+		//cout << entityCount << endl;
 	}
 
 	Entity* getCurrentPlayer() {

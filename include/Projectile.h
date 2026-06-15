@@ -4,6 +4,7 @@
 
 class Projectile : public Entity {
 protected:
+	bool enemyProjectile;
 	int angle;
 	int impactRadius;
 	int damage;
@@ -13,6 +14,7 @@ public:
 	Projectile(TextureManager* tex,AudioManager* aud, int x, int y) : Entity(tex,aud, x, y) {
 		active = true;
 		isProjectile = true;
+		enemyProjectile = false;
 	}
 
 	void handleInput() override {
