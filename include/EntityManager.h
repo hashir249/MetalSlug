@@ -89,18 +89,11 @@ class EntityManager {
 
 	void checkProjectileCollisions() {
 		for (int i = 0; i < entityCount; i++) {
-			// Only check if it's a projectile (assuming you have a way to identify)
 			if (!entities[i]->getProjectileStatus()) continue;
-
 			for (int j = 0; j < entityCount; j++) {
-				// Don't check against self or other projectiles
 				if (i == j || entities[j]->getProjectileStatus()) continue;
-
-				// Only interact if it's an enemy
 				if (!entities[j]->getEnemyStatus()) continue;
-
 				if (entityOverlap(entities[i]->getHitBox(), entities[j]->getHitBox())) {
-					// Trigger the interaction
 					entities[i]->interact(entities[j]);
 				}
 			}
@@ -137,8 +130,11 @@ public:
 		addEntity(new PowPrisoner(textureManager, audioManager, 600, 1200));
 		
 		for (int i = 0; i < 1; i++) {
-			//addEntity(new ShieldedSoldier(textureManager, audioManager, 1400 + i * 100, 1200));
+			addEntity(new ShieldedSoldier(textureManager, audioManager, 1400 + i * 100, 1200));
 			addEntity(new Zombie(textureManager, audioManager, 2800 + i * 200, 1200));
+			addEntity(new Neil(textureManager, audioManager, 4000 + i * 300, 1300));
+			addEntity(new MummyWarrior(textureManager, audioManager, 7000 + i * 100, 1300));
+			addEntity(new BazookaSoldier(textureManager, audioManager, 9000 + i * 200, 1400));
 		}
 	}
 

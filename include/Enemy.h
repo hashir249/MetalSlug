@@ -9,6 +9,7 @@ protected:
 	EnemyAIState enemyAI;
 	float speed;
 	Inventory inventory;
+	sf::Vector2f weaponPlug;
 public:
 	Enemy(TextureManager* tex, AudioManager* aud, int x, int y) : DamageableEntity(tex, aud,x, y) {
 		gravityEffect = true;
@@ -40,12 +41,10 @@ public:
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile* p) override {
 		cout << "Interaction" << endl;
-		if (!p->getCollided()) {
+		if (!(p->getCollided() || p->isEnemyProjectile())) {
 			takeDamage(p->getDamage());
 			p->setCollided(true);
 		}
-		
-
 		cout << "Damage: " << p->getDamage() << endl;
 		cout << "HP: " << this->getHp() << endl;
 	}
@@ -74,6 +73,13 @@ public:
 			state = s;
 		}
 		else state = i;
+	}
+
+	virtual Entity* productEntity() override {
+		Entity* product = this->product;
+		if (product != nullptr) product->setEnemyFlag(true);
+		this->product = nullptr;
+		return product;
 	}
 };
 
@@ -142,7 +148,9 @@ public:
 		}
 		animation.apply(sprite).cycle();
 		hitBoxUpdate();
-		inventory.update(position, direction);
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+		inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
 	void handleInput() override {
@@ -201,6 +209,7 @@ private:
 		velocity = sf::Vector2f(0, 0);
 		hp = 10;
 		enemyAI.setRange(1000);
+		weaponPlug = sf::Vector2f(26, 13);
 	}
 public:
 	Zombie(TextureManager* tex, AudioManager* aud, int x, int y) : Enemy(tex, aud, x, y) {
@@ -209,7 +218,7 @@ public:
 		setAnimation(state);
 		int weaponX = hitbox.left + (animation.getWidth() * scale.x);
 		int weaponY = hitbox.top + (animation.getHeight() * scale.y);
-		inventory.addWeapon(new ShotGun(textureManager, audioManager, weaponX + 30, weaponY + 20, direction, false));
+		inventory.addWeapon(new ShotGun(textureManager, audioManager, weaponX + 30, weaponY + 20, direction, true));
 	}
 	void update() override {
 		velocity.x = 0;
@@ -235,7 +244,9 @@ public:
 
 		animation.apply(sprite).cycle();
 		hitBoxUpdate();
-		inventory.update(position, direction);
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+		inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
 
@@ -355,7 +366,9 @@ public:
 		}
 		animation.apply(sprite).cycle();
 		hitBoxUpdate();
-		inventory.update(position, direction);
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+		inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
 	void handleInput() override {
@@ -383,58 +396,66 @@ private:
 			animation.setWidth(43).setHeight(41).setReversed(true);
 		}
 		else if (state == 2) {
+			animation.setTexture(textureManager->getTexture("bazooka_soldier_shoot.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setPadding(0).setLoop(false);
+			animation.setWidth(41).setHeight(42);
+		}
+		else if (state == 3) {
 			animation.setTexture(textureManager->getTexture("bazooka_soldier_jumping.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(8).setDelay(150).setPadding(0).setLoop(true);
 			animation.setWidth(43).setHeight(44);
-		}
-		else if (state == 3) {
-			animation.setTexture(textureManager->getTexture("bazooka_soldier_shoot.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setPadding(0).setLoop(true);
-			animation.setWidth(41).setHeight(42);
 		}
 		else if (state == 4) {
 			animation.setTexture(textureManager->getTexture("bazooka_soldier_recoil.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(3).setPadding(0).setLoop(true);
 			animation.setWidth(40).setHeight(44);
 		}
-		else if (state == 5) {
-			animation.setTexture(textureManager->getTexture("bazooka_soldier_die.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(9).setPadding(0).setLoop(false);
-			animation.setWidth(60).setHeight(57);
-		}
+	}
+
+	void InitialStats() override {
+		maxStates = 5, state = previousState = 0;
+		scale = sf::Vector2f(2.5, 2.5);
+		speed = 2;
+		enemyAI.setRange(500);
+		weaponPlug = sf::Vector2f(38 * scale.x, 8 * scale.y);
 	}
 public:
 	BazookaSoldier(TextureManager* tex, AudioManager* aud, int x, int y) : Enemy(tex,aud, x, y) {
-		/* 0 -> idle, 1 -> running , 2 ->  jump , 3 -> shoot, 4 -> recoil , 5 -> die
-		*/
-		maxStates = 6;
-		state = 0;
-		previousState = 0;
-		scale.x = 2.5;
-		scale.y = 2.5;
-		direction = 1;
-		speed = 2;
-		active = true;
+		// 0 -> idle, 1 -> running , 2 ->  jump , 3 -> shoot, 4 -> recoil ,
+		InitialStats();
 		setAnimation(state);
-
 		int weaponX = hitbox.left + (animation.getWidth() * scale.x);
 		int weaponY = hitbox.top + (animation.getHeight() * scale.y);
-
 		inventory.addWeapon(new Bazooka(textureManager, audioManager, weaponX, weaponY, direction, false));
 	}
 
 	void update() override {
+		velocity.x = 0;
+		if (isDead()) {
+			active = false;
+		}
 		handleInput();
 		if (state != previousState) {
 			setAnimation(state);
 			previousState = state;
 		}
-		animation.apply(sprite);
-		animation.cycle();
+		animation.apply(sprite).cycle();
 		hitBoxUpdate();
-		hitBoxUpdate();
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+		inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
+	void handleInput() override {
+		if (isDead()) return;
+		bool a = enemyAI.alert(position);
+		if (a) {
+			MoveAndShoot(0, 1, 2);
+		}
+		else {
+			PatrolState();
+		}
+	}
 };
 
 class Martian : public Enemy {
@@ -518,7 +539,7 @@ class Neil : public Enemy {
 		else if (state == 2) {
 			animation.setTexture(textureManager->getTexture("neil_shoot_one.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(75).setPadding(0).setLoop(true);
-			animation.setWidth(125).setHeight(67);
+			animation.setWidth(128).setHeight(67);
 		}
 		else if (state == 3) {
 			animation.setTexture(textureManager->getTexture("neil_shoot_two.png"));
@@ -527,7 +548,7 @@ class Neil : public Enemy {
 		}
 		else if (state == 4) {
 			animation.setTexture(textureManager->getTexture("neil_die.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(1000).setPadding(0).setLoop(false);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(300).setPadding(0).setLoop(false);
 			animation.setWidth(85).setHeight(46);
 		}
 	}
@@ -537,6 +558,7 @@ class Neil : public Enemy {
 		speed = 1;
 		enemyAI.setRange(1000);
 		hp = 40;
+		weaponPlug = sf::Vector2f(77 * scale.x,31*scale.y);
 	}
 
 public:
@@ -545,7 +567,6 @@ public:
 		setAnimation(state);
 		int weaponX = hitbox.left + (animation.getWidth() * scale.x);
 		int weaponY = hitbox.top + (animation.getHeight() * scale.y);
-
 		inventory.addWeapon(new MachineGun(textureManager, audioManager, weaponX + 100, weaponY, direction, false));
 	}
 
@@ -565,7 +586,9 @@ public:
 		}
 		animation.apply(sprite).cycle();
 		hitBoxUpdate();
-		inventory.update(position, direction);
+		float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+		cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+		inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
 	void handleInput() override {

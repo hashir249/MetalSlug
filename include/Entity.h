@@ -267,6 +267,9 @@ public:
 	virtual void setProjectile(sf::Vector2f pos) {
 
 	}
+	virtual void setEnemyFlag(bool f) {
+
+	}
 	// interactions for each object so right fuctions are dispatched
 	// double dispatch pattern
 	virtual void interact(Entity* other) = 0;

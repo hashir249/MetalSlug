@@ -4,7 +4,7 @@
 
 class Projectile : public Entity {
 protected:
-	bool enemyProjectile;
+	bool enemyProjectile; // flag
 	int angle;
 	int impactRadius;
 	int damage;
@@ -15,6 +15,10 @@ public:
 		active = true;
 		isProjectile = true;
 		enemyProjectile = false;
+	}
+
+	void setEnemyFlag(bool f) override {
+		this->enemyProjectile = f;
 	}
 
 	void handleInput() override {
@@ -31,6 +35,9 @@ public:
 
 	void interactWithEnemy(Enemy* e) override {
 
+	}
+	bool isEnemyProjectile() const {
+		return enemyProjectile;
 	}
 
 	virtual void render(RenderWindow& window, int scroll_x, int scroll_y) override {

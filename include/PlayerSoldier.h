@@ -31,16 +31,11 @@ protected:
 		}
 	}
 
-	Entity* throwGrenade()
-	{
-		if (grenades <= 0)
-			return nullptr;
-
+	Entity* throwGrenade(){
+		if (grenades <= 0) return nullptr;
 		grenades--;
-
 		int x = position.x;
 		int y = position.y;
-
 		return new Grenade(textureManager,audioManager,x,y - 100,direction,75);
 	}
 public:
@@ -170,6 +165,14 @@ public:
 
 	void interactWithCollectible(Collectible* c) override {
 
+	}
+
+	// override for setting the enemy flag on teh projectiles
+	virtual Entity* productEntity() override {
+		Entity* product = this->product;
+		if (product != nullptr) product->setEnemyFlag(false);
+		this->product = nullptr;
+		return product;
 	}
 };
 
