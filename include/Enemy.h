@@ -41,6 +41,7 @@ public:
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile* p) override {
 		cout << "Interaction" << endl;
+		if (isDead()) return;
 		if (!(p->getCollided() || p->isEnemyProjectile())) {
 			takeDamage(p->getDamage());
 			p->setCollided(true);
