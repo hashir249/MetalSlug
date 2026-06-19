@@ -63,7 +63,7 @@ public:
 		if (audioManager == nullptr) audioManager = aud;
 	}
 
-	Entity(TextureManager* tex,AudioManager* aud, int x, int y) : textureManager(tex),active(true) {
+	Entity(TextureManager* tex, AudioManager* aud, int x, int y) : textureManager(tex), active(true) {
 		position = sf::Vector2f(x, y);
 		state = maxStates = 0;
 		velocity = sf::Vector2f(0, 0);
@@ -106,7 +106,6 @@ public:
 
 	Entity& setPosition(sf::Vector2f& position) {
 		this->position = position;
-
 		return *this;
 	}
 
@@ -129,9 +128,7 @@ public:
 	}
 
 	Entity& setPosition(int x, int y) {
-		this->position.x = x;
-		this->position.y = y;
-
+		this->position = sf::Vector2f(x, y);
 		return *this;
 	}
 
@@ -141,6 +138,10 @@ public:
 	}
 	Entity& setVelocityY(float y) {
 		velocity.y = y;
+		return *this;
+	}
+	Entity& setVelocity(sf::Vector2f v) {
+		this->velocity = v;
 		return *this;
 	}
 

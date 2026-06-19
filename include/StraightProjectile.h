@@ -6,6 +6,7 @@
 #include<iostream>
 using namespace std;
 
+
 class StraightProjectile : public Projectile {
 protected:
 	float range; // can travel that much distanc
@@ -47,6 +48,17 @@ public:
 			velocity.x *= -1;
 		}
 	}
+
+	// overrides
+	virtual void interact(Entity* other) override {
+		other->interactWithProjectile(this);
+	}
+	virtual void interactWithPlayer(PlayerSoldier*) override {}
+	virtual void interactWithEnemy(Enemy*) override {}
+	virtual void interactWithProjectile(Projectile*) override {}
+	virtual void interactWithVehicle(Vehicle*) override {}
+	virtual void interactWithCollectible(Collectible*) override {}
+	virtual void interactWithTerrain(Block*) override {}
 };
 
 class Bullet : public StraightProjectile {
@@ -71,6 +83,7 @@ private:
 			animation.setTexture(textureManager->getTexture("bullet_impact.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(100).setPadding(0).setLoop(false);
 			animation.setWidth(29).setHeight(30);
+			scale = sf::Vector2f(2, 2);
 		}
 
 	}
@@ -83,6 +96,7 @@ public:
 		this->direction = direction;
 		damage = 3; // 3 hp
 		impactRadius = 0;
+		bullet = true;
 		this->angle = angle;
 		scale.x = scale.y = 1.3;
 		range = 1500;
@@ -124,16 +138,8 @@ public:
 		distance += velocity.y;
 	}
 
-	virtual void interact(Entity* other) override {
-		other->interactWithProjectile(this);
-	}
 	virtual void interactWithPlayer(PlayerSoldier*) override;
 	virtual void interactWithEnemy(Enemy*) override;
-	virtual void interactWithProjectile(Projectile*) override {}
-	virtual void interactWithVehicle(Vehicle*) override {}
-	virtual void interactWithCollectible(Collectible*) override {}
-	virtual void interactWithTerrain(Block*) override {}
-
 };
 
 class Rocket : public StraightProjectile {
@@ -147,12 +153,13 @@ private:
 		else if (state == 1) {
 			animation.setTexture(textureManager->getTexture("rocket_move.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(250).setPadding(0).setLoop(true);
-			animation.setWidth(21).setHeight(12);
+			animation.setWidth(24).setHeight(12);
 		}
 		else if (state == 2) {
 			animation.setTexture(textureManager->getTexture("bazooka_impact.png"));
 			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
-			animation.setWidth(28).setHeight(29);
+			animation.setWidth(27).setHeight(29);
+			scale = sf::Vector2f(3,4);
 		}
 
 	}
@@ -162,21 +169,25 @@ public:
 		state = 0;
 		previousState = state;
 		this->direction = direction;
-		damage = 3; // 3 hp
+		damage = 10; // 3 hp
 		impactRadius = 0;
 		this->angle = angle;
-		range = 15000;
+		range = 1000;
 		speed = 20;
 		distance = 0;
-		scale.x = scale.y = 1.5;
+		scale.x = scale.y = 1.75;
 		velocityComponents(angle);
 		setAnimation(state);
 	}
 
 	void update() override {
-
+		if (distance >= range) {
+			active = false;
+			return;
+		}
 		if (collided == true) {
 			state = 2;
+			velocity.x = 0;
 		}
 		if (animation.getDone()) {
 			state++;
@@ -194,13 +205,8 @@ public:
 			previousState = state;
 		}
 		animation.apply(sprite).cycle();
-	}
 
-	virtual void interact(Entity* other) override {}
-	virtual void interactWithPlayer(PlayerSoldier* p) override { collided = true; }
-	virtual void interactWithEnemy(Enemy*) override {}
-	virtual void interactWithProjectile(Projectile*) override {}
-	virtual void interactWithVehicle(Vehicle*) override {}
-	virtual void interactWithCollectible(Collectible*) override {}
-	virtual void interactWithTerrain(Block*) override {}
+		distance += velocity.x;
+		distance += velocity.y;
+	}
 };

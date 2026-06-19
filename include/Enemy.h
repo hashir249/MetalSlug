@@ -125,6 +125,7 @@ private:
 		speed = 3;
 		hp = 5;
 		enemyAI.setRange(1000);
+		weaponPlug = sf::Vector2f(15*scale.x , 5*scale.y);
 	}
 public:
 	ShieldedSoldier(TextureManager* tex, AudioManager* aud, int x, int y) : Enemy(tex, aud, x, y) {
@@ -135,13 +136,32 @@ public:
 		int weaponY = hitbox.top + (animation.getHeight() * scale.y);
 		inventory.addWeapon(new ShotGun(textureManager, audioManager, weaponX, weaponY, direction, false));
 	}
+	//void update() override {
+	//	velocity.x = 0;
+	//	if (isDead()) {
+	//		active = false;
+	//		return;
+	//	}
+	//	handleInput();
+	//	if (state != previousState) {
+	//		setAnimation(state);
+	//		previousState = state;
+	//	}
+	//	animation.apply(sprite).cycle();
+	//	hitBoxUpdate();
+	//	float cx = cx = position.x + 0.5f * animation.getWidth() * scale.x;
+	//	cx += (direction == 1) ? weaponPlug.x : -weaponPlug.x;
+	//	inventory.update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
+	//}
 	void update() override {
 		velocity.x = 0;
-	
+		if (isDead()) {
+			active = false;
+			return;
+		}
 		if (state == 2 && animation.getDone()) {
 			state = 0;
 		}
-
 		handleInput();
 		if (state != previousState) {
 			setAnimation(state);
@@ -165,11 +185,14 @@ public:
 	}
 
 	virtual void interactWithProjectile(Projectile* p) override {
-		if (direction == p->getDirection()) return;
+		//if ((direction != p->getDirection()) && (p->isBullet())) return;
 		if (!p->getCollided()) {
-			takeDamage(p->getDamage());
+			bool dirCon = direction != p->getDirection();
+			bool isBullet = p->isBullet();
+			if (!(dirCon && isBullet)) takeDamage(p->getDamage());
 			p->setCollided(true);
 		}
+		cout << "ShieldedSoldier " << hp << endl;
 	}
 };
 
@@ -277,7 +300,7 @@ private:
 		}
 		else if (state == 2) {
 			animation.setTexture(textureManager->getTexture("mummy_warrior_fire.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(150).setPadding(0).setLoop(true);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(200).setPadding(0).setLoop(false);
 			animation.setWidth(47).setHeight(48);
 		}
 	}
@@ -294,6 +317,7 @@ public:
 	}
 
 	void handleInput() override {
+		if (isDead()) return;
 		bool a = enemyAI.alert(position);
 		if (a) {
 			direction = enemyAI.directionSet(position);
@@ -307,6 +331,13 @@ public:
 
 	void update() override {
 		velocity.x = 0;
+		if (isDead()) {
+			state = 2;
+			if (state == 2 && animation.getDone()) {
+				active = false;
+				return;
+			}
+		}
 		handleInput();
 		if (state != previousState) {
 			setAnimation(state);
@@ -418,7 +449,7 @@ private:
 		scale = sf::Vector2f(2.5, 2.5);
 		speed = 2;
 		enemyAI.setRange(500);
-		weaponPlug = sf::Vector2f(38 * scale.x, 8 * scale.y);
+		weaponPlug = sf::Vector2f(12 * scale.x, 1 * scale.y);
 	}
 public:
 	BazookaSoldier(TextureManager* tex, AudioManager* aud, int x, int y) : Enemy(tex,aud, x, y) {
@@ -578,7 +609,6 @@ public:
 			if (state == 4 && animation.getDone()) {
 				active = false;
 			}
-
 		}
 		handleInput();
 		if (state != previousState) {
@@ -602,4 +632,6 @@ public:
 			PatrolState();
 		}
 	}
+
+	
 };

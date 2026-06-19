@@ -5,6 +5,7 @@
 
 class Soldier : public DamageableEntity {
 protected:
+	Vehicle* vehicle;
 	float jumpForce;
 	Inventory* inventory; // as soldier does not own it
 	sf::Vector2f weaponPlug;
@@ -14,6 +15,28 @@ public:
 		inventory = new Inventory;
 		product = nullptr; // till now there is no projectile in the start
 		// will be created when fire is shot
+	}
+
+	// vehicle options
+	void enterVehicle(Vehicle* v) {
+		if (vehicle == nullptr) {
+			vehicle = v;
+			hide = true;
+			cout << "entering" << endl;
+		}
+		
+	}
+
+	void leaveVehicle() {
+		if (vehicle) {
+			vehicle = nullptr;
+			hide = false;
+			cout << "leaving" << endl;
+		}
+	}
+
+	bool insideVehicle() const {
+		return vehicle != nullptr;
 	}
 
 	void virtual attack() = 0;
@@ -36,9 +59,7 @@ public:
 
 	}
 
-	void interactWithVehicle(Vehicle* v) override {
-
-	}
+	void interactWithVehicle(Vehicle* v) override {}
 	void interactWithCollectible(Collectible* c) override {
 
 	}

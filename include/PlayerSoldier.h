@@ -1,8 +1,9 @@
 #pragma once
 #include "Soldier.h"
+#include "Vehicle.h"
 //#include "Collectible.h"
 using namespace std;
-class Vehicle;
+//class Vehicle;
 
 class PlayerSoldier : public Soldier {
 protected:
@@ -49,7 +50,7 @@ public:
 		onGround = false;
 		gravityEffect = true;
 		grenades = 20;
-		//inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
 		//inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
 		//inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
 		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
@@ -66,6 +67,9 @@ public:
 	}
 
 	void takeDamage(int damage) override {
+
+	}
+	void attack() override {
 
 	}
 	void takeHit() override {
@@ -117,55 +121,7 @@ public:
 		inventory->update(sf::Vector2f(cx, position.y + weaponPlug.y), direction);
 	}
 
-	void handleInput()
-	{
-		velocity.x = 0;
-		moving = false;
-		if (state == 4 || state == 5){
-			if (animation.getDone()) state = 0;
-			//return;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			velocity.x = speed;
-			direction = 1;
-			moving = true;
-			if (onGround) state = 1;
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			velocity.x = -speed;
-			direction = 2;
-			moving = true;
-			if (onGround) state = 1;
-		}
-		else if (onGround) state = 0;
-
-		if (Keyboard::isKeyPressed(Keyboard::Up) && onGround){
-			velocity.y = -jumpForce;
-			onGround = false;
-			state = 2;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::M)){
-			state = 4;
-			return;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::G)){
-			state = 5;
-			product = throwGrenade();
-		
-		}
-		if (Keyboard::isKeyPressed(Keyboard::Q)){
-			state = 3;
-			product = inventory->fire();
-		}
-		if (Keyboard::isKeyPressed(Keyboard::X)){
-			inventory->nextWeapon();
-		}
-		
-	}
-
-	void interactWithCollectible(Collectible* c) override {
-
-	}
+	void handleInput();
 
 	// override for setting the enemy flag on teh projectiles
 	virtual Entity* productEntity() override {
@@ -174,6 +130,8 @@ public:
 		this->product = nullptr;
 		return product;
 	}
+
+	void interactWithVehicle(Vehicle* v) override;
 };
 
 
@@ -280,16 +238,7 @@ public:
 		gapFactor = 21;
 		hitBoxUpdate();
 		moving = false;
-	}	
-
-	void attack() override {
-
 	}
-
-	void takeDamage(int damage) override {
-
-	}
-
 };
 
 
@@ -395,12 +344,6 @@ public:
 		gapFactor = 15;
 		legFactor = 3;
 	}
-	void attack() override {
-	}
-	void takeDamage(int damage) override {
-
-	}
-
 };
 
 
@@ -508,14 +451,6 @@ public:
 		previousState = state;
 		
 	}
-
-	void attack() override {
-		
-	}
-	void takeDamage(int damage) override {
-
-	}
-
 };
 
 
@@ -619,13 +554,5 @@ public:
 		gapFactor = 32;
 		legFactor = 10;
 		previousState = state;
-	}
-
-	
-	void attack() override {
-
-	}
-	void takeDamage(int damage) override {
-
 	}
 };

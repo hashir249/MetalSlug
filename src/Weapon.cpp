@@ -41,7 +41,7 @@ Entity* Bazooka::fire() {
 		if (direction == 2) x -= hitbox.width * 2;
 		ammo--;
 		ammo = (ammo < 0) ? 0 : ammo;
-		return new Rocket(textureManager, audioManager, x, y, direction, angle);
+		return new Rocket(textureManager, audioManager, x, y - 10, direction, angle);
 	}
 
 	Entity* LaserGun::fire() {

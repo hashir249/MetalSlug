@@ -205,7 +205,7 @@ class Bazooka : public Weapon {
 	}
 public:
 	Bazooka(TextureManager* tex, AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon("Bazooka", tex, aud, x, y) {
-		coolDown = 5000;
+		coolDown = 1000;
 		scale.x = scale.y = 1.6;
 		angle = 0;
 		this->direction = direction;
