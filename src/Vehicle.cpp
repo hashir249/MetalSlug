@@ -5,11 +5,11 @@ void Vehicle::interactWithPlayer(PlayerSoldier* p){
 }
 
 void Vehicle::mount(PlayerSoldier* p) {
-    if(driver == nullptr) driver = p;
+    driver = p;
 }
 
 void Vehicle::unmount() {
-    driver == nullptr;
+    driver = nullptr;
 }
 
 bool Vehicle::occupied() const {

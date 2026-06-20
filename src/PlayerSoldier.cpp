@@ -1,6 +1,25 @@
 #include "PlayerSoldier.h"
 
 void PlayerSoldier::handleInput() {
+	if(Keyboard::isKeyPressed(Keyboard::V)){
+		if(mountingTimer.getElapsedTime().asMilliseconds() >= 1000){
+			if(insideVehicle()){
+				int x, y;
+				x = y = 0;
+				if(vehicle != nullptr){
+					x = vehicle->getX();
+					y = vehicle->getY();
+					vehicle->unmount();
+				}
+
+				leaveVehicle();
+				this->setPosition(x - 100, y + 100);
+
+				mountingTimer.restart();
+			}
+		}
+	}
+
     if (insideVehicle()) vehicle->handleInput();
 		else {
 			velocity.x = 0;
@@ -49,17 +68,9 @@ void PlayerSoldier::handleInput() {
 
 void PlayerSoldier::interactWithVehicle(Vehicle* v) {
 	if(Keyboard::isKeyPressed(sf::Keyboard::V)){
-		if(insideVehicle()) {
-			leaveVehicle();
-			v->unmount();
-			int x = v->getX();
-			int y = v->getY();
-
-			this->setPosition(x - 100, y + 100);
-		}
-		else{
-			enterVehicle(v);
-			v->mount(this);
-		}
+		if(mountingTimer.getElapsedTime().asMilliseconds() < 1000) return;
+		enterVehicle(v);
+		v->mount(this);
+		mountingTimer.restart();
 	}
 }

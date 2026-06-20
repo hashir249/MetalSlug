@@ -7,7 +7,11 @@ using namespace std;
 
 class PlayerSoldier : public Soldier {
 protected:
+	// adding time for mounting and unmountin
+	Clock mountingTimer;
+	// grenades
 	int grenades;
+
 	bool moving;
 	int speed;
 	int saturationStat;

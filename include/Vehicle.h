@@ -2,6 +2,7 @@
 
 #include "DamageableEntity.h"
 #include "PlayerSoldier.h"
+using namespace sf;
 
 class Vehicle : public DamageableEntity {
 protected:
@@ -364,7 +365,7 @@ private:
 		}
 		else if (state == 2) {
 			animation.setTexture(textureManager->getTexture("slugflyer_moving.png"));
-			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(175).setPadding(0).setLoop(false);
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(5).setDelay(175).setPadding(0).setLoop(true);
 			animation.setWidth(81).setHeight(55).setReversed(true);
 		}
 		else if (state == 3) {
@@ -394,28 +395,28 @@ public:
 
 	void handleInput() override {
 		if (driver == nullptr) return;
-		velocity.y = velocity.x = 0;
+		velocity.x = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
 			state = 2;
 			velocity.y = -speed;
-			velocity.x = 0;
+			//velocity.x = 0;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
 			state = 2;
 			velocity.x = speed;
-			velocity.y = 0;
+			//velocity.y = 0;
 			direction = 1;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Left)) {
 			state = 2;
 			velocity.x = -speed;
 			direction = 2;
-			velocity.y = 0;
+			//velocity.y = 0;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Down)) {
 			state = 2;
 			velocity.y = speed;
-			velocity.x = 0;
+			//velocity.x = 0;
 		}
 
 		if (velocity.x == 0 && velocity.y == 0) {
@@ -424,6 +425,7 @@ public:
 	}
 
 	void update() override {
+		setVelocity(sf::Vector2f());
 		handleInput();
 		hitBoxUpdate();
 		if (state != previousState) {
@@ -433,7 +435,6 @@ public:
 		}
 		animation.apply(sprite);
 		animation.cycle();
-
 	}
 };
 
@@ -569,23 +570,18 @@ public:
 		// state(3) -> marine going up , state(4) ->marine going down 
 		setAnimation(state);
 		submerged = false;
-		driverRequirement = true;
-
 		previousState = state;
 		driverRequirement = true;
-		// for now no special intended meaning used
-		depth = 0;
-		underwaterSpeed = 1.5;
-		surfaceSpeed = 2.5;
-		diveSpeed = 1;
-
-		scale.x = 2.75;
-		scale.y = 2.75;
+		underwaterSpeed = 4;
+		surfaceSpeed = 7;
+		diveSpeed = 3;
+		scale = sf::Vector2f(2.75, 2.75);
 	}
 
 
 	void handleInput() override {
 		if (driver == nullptr) return;
+		velocity.x = velocity.y = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
 			position.y -= diveSpeed;
 			state = 3;
@@ -618,6 +614,7 @@ public:
 		if (previousState != state) {
 			setAnimation(state);
 			previousState = state;
+			velocity = sf::Vector2f();
 		}
 		animation.apply(sprite);
 		animation.cycle();

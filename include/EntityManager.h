@@ -127,8 +127,8 @@ public:
 		addPlayer(new Fiolina(textureManager,audioManager, 200, 1300));
 		addPlayer(new Marco(textureManager,audioManager, 500, 1300));
 		addPlayer(new Eri(textureManager,audioManager, 400, 1300));
-		addPlayer(new Tarma(textureManager,audioManager, 300, 1300));
-		addEntity(new PowPrisoner(textureManager, audioManager, 600, 1200));
+		addPlayer(new Tarma(textureManager,audioManager, 300, 100));
+		//addEntity(new PowPrisoner(textureManager, audioManager, 600, 1200));
 		
 		//for (int i = 0; i < 1; i++) {
 		//	addEntity(new ShieldedSoldier(textureManager, audioManager, 1400 + i * 100, 1200));
