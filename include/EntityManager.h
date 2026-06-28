@@ -130,16 +130,17 @@ public:
 		addPlayer(new Tarma(textureManager,audioManager, 300, 100));
 		//addEntity(new PowPrisoner(textureManager, audioManager, 600, 1200));
 		
-		//for (int i = 0; i < 1; i++) {
-		//	addEntity(new ShieldedSoldier(textureManager, audioManager, 1400 + i * 100, 1200));
-		//	addEntity(new Zombie(textureManager, audioManager, 2800 + i * 200, 1200));
-		//	addEntity(new Neil(textureManager, audioManager, 4000 + i * 300, 1300));
-		//	addEntity(new MummyWarrior(textureManager, audioManager, 7000 + i * 100, 1300));
-		//	addEntity(new BazookaSoldier(textureManager, audioManager, 9000 + i * 200, 1400));
-		//}
+		for (int i = 0; i < 1; i++) {
+			//addEntity(new PatrolRobot(textureManager, audioManager, 1000 + i * 100, 1300));
+			addEntity(new ShieldedSoldier(textureManager, audioManager, 2800 + i * 100, 1200));
+			addEntity(new Zombie(textureManager, audioManager, 4000 + i * 200, 1200));
+			addEntity(new Neil(textureManager, audioManager, 7000 + i * 300, 1300));
+			addEntity(new MummyWarrior(textureManager, audioManager, 9000 + i * 100, 1300));
+			addEntity(new BazookaSoldier(textureManager, audioManager, 10000 + i * 200, 1400));
+		}
 
 		for (int i = 0; i < 1; i++) {
-			addEntity(new SlugFlyer(textureManager, audioManager, 1000, 1200));
+			//addEntity(new FlyingTara(textureManager, audioManager, 1000, 1200));
 		}
 	}
 

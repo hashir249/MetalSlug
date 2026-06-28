@@ -632,6 +632,73 @@ public:
 			PatrolState();
 		}
 	}
+};
 
-	
+class PatrolRobot : public Enemy {
+	void setAnimation(int state) {
+		if (state == 0) {
+			animation.setTexture(textureManager->getTexture("patrol_simple.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(13).setDelay(200).setPadding(0).setLoop(true);
+			animation.setWidth(29).setHeight(24).setReversed(true);
+		}
+		else if (state == 1) {
+			animation.setTexture(textureManager->getTexture("patrol_simple.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(13).setDelay(200).setPadding(0).setLoop(true);
+			animation.setWidth(29).setHeight(24).setReversed(true);
+		}
+		else if (state == 2) {
+			animation.setTexture(textureManager->getTexture("patrol_impact.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(4).setDelay(300).setPadding(0).setLoop(false);
+			animation.setWidth(30).setHeight(47);
+		}
+		else if (state == 3) {
+			animation.setTexture(textureManager->getTexture("patrol_explode.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(8).setDelay(200).setPadding(0).setLoop(false);
+			animation.setWidth(125).setHeight(67);
+		}
+	}
+
+	void InitialStats() {
+		maxStates = 4, state = previousState = 0;
+		scale = sf::Vector2f(2, 2);
+		speed = 5;
+		enemyAI.setRange(1000, false);
+		hp = 3;
+	}
+
+public:
+	PatrolRobot(TextureManager* tex, AudioManager* aud, int x, int y) : Enemy(tex, aud, x, y) {
+		InitialStats();
+		setAnimation(state);
+		gravityEffect = false;
+	}
+
+	void update() override {
+		velocity.x = 0;
+		if (isDead()) {
+			state = 3;
+			if (state == 3 && animation.getDone()) {
+				active = false;
+			}
+		}
+		handleInput();
+		if (state != previousState) {
+			setAnimation(state);
+			previousState = state;
+		}
+		animation.apply(sprite).cycle();
+		hitBoxUpdate();
+	}
+
+	void handleInput() override {
+		if (isDead()) return;
+		bool a = enemyAI.alert(position);
+		if (a) {
+			//PatrolState();
+			MoveAndShoot(0, 1, 2);
+		}
+		else {
+			PatrolState();
+		}
+	}
 };

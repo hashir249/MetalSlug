@@ -16,9 +16,10 @@ public:
 	EnemyAIState() {
 		
 	}
-	void setRange(int r) {
+	void setRange(int r, bool applyBuffer = true) {
 		range = r;
-		buffer = 8.f * r / 10.f;
+		if (applyBuffer) buffer = 8.f * r / 10.f;
+		else buffer = 0;
 		patrolLimit = 3.f * range / 10.f;
 	}
 

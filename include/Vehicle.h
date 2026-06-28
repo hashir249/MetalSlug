@@ -310,7 +310,7 @@ public:
 	}
 
 	void handleInput() override {
-		return; // for flying tara input is not handled
+		//return; // for flying tara input is not handled
 		velocity.y = velocity.y = 0;
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
 			state = 1;
@@ -606,8 +606,6 @@ public:
 			this->state = 1;
 		}
 	}
-
-
 
 	void update() override {
 		handleInput();
