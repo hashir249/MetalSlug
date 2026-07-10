@@ -168,12 +168,11 @@ class FlameGun : public Weapon {
 	}
 public:
 	FlameGun(TextureManager* tex,AudioManager* aud, int x, int y, int direction, bool drawable = 1) : Weapon("FlameGun", tex, aud, x, y) {
-		coolDown = 1000;
+		coolDown = 100;
 		scale.x = scale.y = 1;
 		angle = 0;
 		this->direction = direction;
 		maxStates = 4;
-		ammo = 0;
 		state = 1;
 		setAnimation(state);
 	}

@@ -54,13 +54,13 @@ public:
 		onGround = false;
 		gravityEffect = true;
 		grenades = 20;
-		inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
+		//inventory->addWeapon(new Bazooka(textureManager, audioManager, position.x, position.y, direction));
 		//inventory->addWeapon(new ShotGun(textureManager, audioManager, position.x, position.y, direction));
-		//inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
-		inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
+		inventory->addWeapon(new FlameGun( textureManager, audioManager, position.x, position.y, direction));
+		//inventory->addWeapon(new MachineGun(textureManager, audioManager, position.x, position.y, direction));
 		inventory->addAmmo(0, 10000);
 		updateWeaponPlug();
-		inventory->setWeapon("MachineGun");
+		//inventory->setWeapon("MachineGun");
 	}
 	void giveStat(int amount) {
 		this->saturationStat += amount;

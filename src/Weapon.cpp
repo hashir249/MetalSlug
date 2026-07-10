@@ -28,9 +28,9 @@ Entity* FlameGun::fire()  {
 		int x = hitbox.width + position.x;
 		int y = position.y + hitbox.height / 2;
 		if (direction == 2) x -= hitbox.width * 2;
-		ammo--;
+		//ammo--;
 		ammo = (ammo < 0) ? 0 : ammo;
-		return new Bullet(textureManager, audioManager, x, y, direction, angle);
+		return new Flame(textureManager, audioManager, x, y, direction, angle);
 }
 
 Entity* Bazooka::fire() {
@@ -54,3 +54,4 @@ Entity* Bazooka::fire() {
 		ammo = (ammo < 0) ? 0 : ammo;
 		return new Bullet(textureManager, audioManager, x, y, direction, angle);
 	}
+

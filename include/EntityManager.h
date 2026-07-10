@@ -117,8 +117,6 @@ public:
 			entities[i] = nullptr;
 		}
 		entityCount = 0;
-		setupLevel(currentLevel);
-
 		// players are maintained separately
 		maxPlayers = 5;
 		players = new Entity * [maxPlayers];
@@ -140,33 +138,15 @@ public:
 		}
 
 		for (int i = 0; i < 1; i++) {
-			//addEntity(new FlyingTara(textureManager, audioManager, 1000, 1200));
-		}
-	}
-
-	void setupLevel(int level) {
-		if (level == 1) {
-			
+			addEntity(new MetalSlug(textureManager, audioManager, 600, 1200));
 		}
 	}
 
 	void update() {
 		handleInput();
-
-		//Entity* currentPlayer = getCurrentPlayer();
-		//if (ps->inVehicle()) {
-		//	getCurrentPlayer()->setHide(true);
-		//}
-		//else {
-		//	currentPlayer->update();
-		//	currentPlayer->handleInput();
-		//	collisionManager->resolve(currentPlayer);
-		//	Entity* shot = currentPlayer->productEntity();
-		//	if (shot) addEntity(shot);
-		//}
-
 		for (int i = 0; i < entityCount; i++) {
 			if (entities[i]->getEnemyStatus()) entities[i]->setTarget(getCurrentPlayer()->getPosition());
+			if (entities[i]->getProjectileStatus()) entities[i]->setTarget(getCurrentPlayer()->getPosition());
 			//entities[i]->handleInput();
 			entities[i]->update();
 			collisionManager->resolve(entities[i]); // for collision
@@ -177,19 +157,13 @@ public:
 				
 			}
 		}
-
-		//// checking interactions betweeen differntn entites
 		checkProjectileCollisions();
 		checkPlayerInteractions();
-		//checkProjectileEnemyCollisions();
-
 		maintainActive();
 		getCurrentPlayer()->update();
 		Entity* shot = getCurrentPlayer()->productEntity();
 		if (shot) addEntity(shot);
 		collisionManager->resolve(getCurrentPlayer());
-
-		//cout << entityCount << endl;
 	}
 
 	Entity* getCurrentPlayer() {

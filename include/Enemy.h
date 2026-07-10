@@ -40,14 +40,13 @@ public:
 	virtual void interactWithPlayer(PlayerSoldier*) override {}
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile* p) override {
-		cout << "Interaction" << endl;
 		if (isDead()) return;
 		if (!(p->getCollided() || p->isEnemyProjectile())) {
 			takeDamage(p->getDamage());
 			p->setCollided(true);
 		}
-		cout << "Damage: " << p->getDamage() << endl;
-		cout << "HP: " << this->getHp() << endl;
+		//cout << "Damage: " << p->getDamage() << endl;
+		//cout << "HP: " << this->getHp() << endl;
 	}
 	virtual void interactWithVehicle(Vehicle*) override {}
 	virtual void interactWithCollectible(Collectible*) override {}

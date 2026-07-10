@@ -210,3 +210,153 @@ public:
 		distance += velocity.y;
 	}
 };
+
+class Flame : public StraightProjectile {
+	// for flame we will track the player movement to move the flame
+	sf::Vector2f previousPosition;
+	sf::Vector2f currentPosition;
+	void setAnimation(int state) override {
+		if (state == 0) {
+			animation.setTexture(textureManager->getTexture("flame_start.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(2).setDelay(100).setPadding(0).setLoop(false);
+			animation.setWidth(55).setHeight(25);
+		}
+		else if (state == 1) {
+			animation.setTexture(textureManager->getTexture("flame_loop.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(70).setPadding(0).setLoop(true);
+			animation.setWidth(65).setHeight(33);
+		}
+		else if (state == 2) {
+			animation.setTexture(textureManager->getTexture("flame_stop.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(100).setPadding(0).setLoop(false);
+			animation.setWidth(55).setHeight(33);
+		}
+	}
+
+public:
+	Flame(TextureManager* tex, AudioManager* aud, int x, int y, int direction, int angle) : StraightProjectile(tex, aud, x, y) {
+		maxStates = 3;
+		state = 0;
+		previousState = state;
+		this->direction = direction;
+		damage = 10; // 3 hp
+		impactRadius = 0;
+		this->angle = angle;
+		range = 10000;
+		speed = 0;
+		distance = 0;
+		scale = sf::Vector2f(3.2, 2);
+		velocityComponents(angle);
+		setAnimation(state);
+		position.x -= 78;
+	}
+
+	void update() override {
+		//cout << "Before" << endl;
+		//cout << position.x << endl;
+		//position.x += currentPosition.x - previousPosition.x;
+		//cout << "After" << endl;
+		//cout << position.x << endl;
+		if (distance >= range) {
+			active = false;
+			return;
+		}
+		if (collided == true) {
+			state = 2;
+			velocity.x = 0;
+		}
+		if (animation.getDone()) {
+			state++;
+			animation.setDone(false);
+			if (state == maxStates) {
+				active = false;
+				return;
+			}
+			setAnimation(state);
+			previousState = state;
+		}
+
+		if (state != previousState) {
+			setAnimation(state);
+			previousState = state;
+		}
+		animation.apply(sprite).cycle();
+
+		distance += velocity.x;
+		distance += velocity.y;
+	}
+
+	virtual void setTarget(sf::Vector2f pos) override {
+		previousPosition = currentPosition;
+		currentPosition = pos;
+	}
+};
+
+class TankRocket : public StraightProjectile {
+private:
+	void setAnimation(int state) override {
+		if (state == 0) {
+			animation.setTexture(textureManager->getTexture("rocket_fire.png"));
+			animation.setCurrentFrame(0).setStartingFrame(2).setTotalFrames(4).setDelay(20).setPadding(5).setLoop(false);
+			animation.setWidth(22).setHeight(16);
+		}
+		else if (state == 1) {
+			animation.setTexture(textureManager->getTexture("tank_rocket.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(8).setDelay(250).setPadding(0).setLoop(true);
+			animation.setWidth(50).setHeight(17);
+		}
+		else if (state == 2) {
+			animation.setTexture(textureManager->getTexture("bazooka_impact.png"));
+			animation.setCurrentFrame(0).setStartingFrame(0).setTotalFrames(6).setDelay(250).setPadding(0).setLoop(false);
+			animation.setWidth(27).setHeight(29);
+			scale = sf::Vector2f(3, 4);
+		}
+
+	}
+public:
+	TankRocket(TextureManager* tex, AudioManager* aud, int x, int y, int direction, int angle) : StraightProjectile(tex, aud, x, y) {
+		maxStates = 3;
+		state = 0;
+		previousState = state;
+		this->direction = direction;
+		damage = 10; // 3 hp
+		impactRadius = 0;
+		this->angle = angle;
+		range = 1000;
+		speed = 20;
+		distance = 0;
+		scale.x = scale.y = 1.75;
+		velocityComponents(angle);
+		setAnimation(state);
+	}
+
+	void update() override {
+		if (distance >= range) {
+			active = false;
+			return;
+		}
+		if (collided == true) {
+			state = 2;
+			velocity.x = 0;
+		}
+		if (animation.getDone()) {
+			state++;
+			animation.setDone(false);
+			if (state == maxStates) {
+				active = false;
+				return;
+			}
+			setAnimation(state);
+			previousState = state;
+		}
+
+		if (state != previousState) {
+			setAnimation(state);
+			previousState = state;
+		}
+		animation.apply(sprite).cycle();
+
+		distance += velocity.x;
+		distance += velocity.y;
+	}
+};

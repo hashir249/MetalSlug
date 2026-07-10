@@ -32,7 +32,6 @@ public:
 		other->interactWithVehicle(this);
 	}
 	virtual void interactWithPlayer(PlayerSoldier* p) override;
-
 	virtual void interactWithEnemy(Enemy*) override {}
 	virtual void interactWithProjectile(Projectile*) override {}
 	virtual void interactWithVehicle(Vehicle*) override {}
@@ -121,9 +120,7 @@ public:
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
 
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Down)) {
-
-		}
+		
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
 			velocity.x = speed;
 			state = 1;
@@ -155,7 +152,6 @@ public:
 
 class Bradley : public GroundVehicle {
 private:
-
 	bool launchReady;
 	void setAnimation(int state) {
 		if (state == 0) {
